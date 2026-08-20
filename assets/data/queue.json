@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-20T04:34:52Z",
-  "n_submissions": 2,
+  "generated": "2026-08-20T05:03:47Z",
+  "n_submissions": 1,
   "items": [
     {
       "id": "MALAVI-SUB-2026-000005",
@@ -12,18 +12,6 @@
       "n_records": 76,
       "n_files": 4,
       "n_warnings": 10,
-      "n_errors": 0
-    },
-    {
-      "id": "MALAVI-SUB-2026-000003",
-      "submitted": "2026-07-27",
-      "status": "Under review",
-      "pill": "p-check",
-      "detail": "2 new lineages · 2 records · post-publication",
-      "n_lineages": 2,
-      "n_records": 2,
-      "n_files": 5,
-      "n_warnings": 1,
       "n_errors": 0
     }
   ]

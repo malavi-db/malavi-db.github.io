@@ -1,7 +1,7 @@
 {
   "release": "2026-03-23",
-  "generated": "2026-08-20T04:34:52Z",
-  "n_names": 33,
+  "generated": "2026-08-20T05:03:47Z",
+  "n_names": 31,
   "names": [
     {
       "name": "ANAZON02",
@@ -110,14 +110,6 @@
     {
       "name": "MARFAL06",
       "claimed": "2026-08-19"
-    },
-    {
-      "name": "NECMON01",
-      "claimed": "2026-07-27"
-    },
-    {
-      "name": "NECMON02",
-      "claimed": "2026-07-27"
     },
     {
       "name": "NYCNYC03",
