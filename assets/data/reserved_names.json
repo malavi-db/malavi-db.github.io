@@ -1,6 +1,139 @@
 {
   "release": "2026-03-23",
-  "generated": "2026-08-07T00:50:51Z",
-  "n_names": 0,
-  "names": []
+  "generated": "2026-08-20T04:34:52Z",
+  "n_names": 33,
+  "names": [
+    {
+      "name": "ANAZON02",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSCRE01",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA02",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA03",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA04",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA05",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA06",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA07",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA08",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA09",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "ANSPLA10",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR03",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR04",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR05",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR06",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR07",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR08",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "FULATR09",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "GALCHL01",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "GALCHL03",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "GALCHL04",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "MARFAL01",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "MARFAL02",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "MARFAL03",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "MARFAL04",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "MARFAL05",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "MARFAL06",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "NECMON01",
+      "claimed": "2026-07-27"
+    },
+    {
+      "name": "NECMON02",
+      "claimed": "2026-07-27"
+    },
+    {
+      "name": "NYCNYC03",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "PODCRI01",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "SPACLY01",
+      "claimed": "2026-08-19"
+    },
+    {
+      "name": "TACRUF02",
+      "claimed": "2026-08-19"
+    }
+  ]
 }
