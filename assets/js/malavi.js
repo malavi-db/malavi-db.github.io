@@ -745,19 +745,51 @@ const CHECKLIST_BEHIND_NOTE =
       '</div>';
   }
 
-  function renderResult(outId, result) {
-    var box = document.getElementById(outId);
+  /* One result as HTML. `panelId` is the id the naming box (if any) hangs its
+     fields off; it is the output box's own id for a single result and a
+     per-record id when several records share the box, so two naming panels can
+     never collide on the same field ids. */
+  function resultHtml(panelId, result) {
     var checks = (result.checks || []).map(function (c) {
       return '<li><span class="tag t-' + c.state + '">' + c.label + "</span><span>" +
              c.text + "</span></li>";
     });
-    var html = '<div class="verdict v-' + (VERDICT_CLASS[result.verdict] || "warn") +
-      '"><span class="mark">' +
-      (MARKS[result.verdict] || "") + '</span><div><h4>' + result.title + "</h4><p>" +
-      result.message + "</p></div></div>";
+    /* An exact match over too few positions keeps the "known" verdict (it must
+       never look like a new lineage) but its title no longer claims "this is
+       X", so it is painted as a caution rather than a tick. */
+    var wash = result.lowCoverage ? "warn" : (VERDICT_CLASS[result.verdict] || "warn");
+    var mark = result.lowCoverage ? MARKS.unknown : (MARKS[result.verdict] || "");
+    var html = '<div class="verdict v-' + wash + '"><span class="mark">' + mark +
+      '</span><div><h4>' + result.title + "</h4><p>" + result.message + "</p></div></div>";
     if (checks.length) html += '<ul class="checklist">' + checks.join("") + "</ul>";
-    if (result.naming) html += namingPanel(outId);
-    box.innerHTML = html;
+    if (result.naming) html += namingPanel(panelId);
+    return html;
+  }
+
+  function renderResult(outId, result) {
+    var box = document.getElementById(outId);
+    box.innerHTML = resultHtml(outId, result);
+    box.classList.add("show");
+  }
+
+  /* Everything the user pasted, one block per FASTA record. A single record
+     renders exactly as before. Several are each headed by their record name,
+     so a known lineage in one record cannot stand in for the others: a pasted
+     FASTA used to be glued into one query and reported as one answer. */
+  function renderResults(outId, records) {
+    if (records.length === 1) {
+      renderResult(outId, records[0].result);
+      return;
+    }
+    var box = document.getElementById(outId);
+    box.innerHTML = '<p class="fine">' + records.length + " records found. Each is checked " +
+      "on its own.</p>" +
+      records.map(function (record, i) {
+        var label = "Record " + (i + 1) + " of " + records.length +
+          (record.name ? " \u2014 " + escapeHtml(record.name) : "");
+        return '<p class="eyebrow">' + label + "</p>" +
+          resultHtml(outId + "-r" + (i + 1), record.result);
+      }).join("");
     box.classList.add("show");
   }
 
@@ -782,7 +814,7 @@ const CHECKLIST_BEHIND_NOTE =
       renderMessage(out, "unknown", "Checking\u2026",
         "Loading the lineage index. This happens once per visit.");
       loadChecker().then(function (checker) {
-        renderResult(out, checker.module.checkSequence(checker.index, raw));
+        renderResults(out, checker.module.checkSequences(checker.index, raw));
       }).catch(function (err) {
         renderMessage(out, "stop", "Could not run the checks",
           "The lineage index did not load (" + err.message + "). Please reload the page, " +
@@ -805,26 +837,43 @@ const CHECKLIST_BEHIND_NOTE =
           nameBox.innerHTML = '<p class="fine">' + suggestion.message + "</p>";
           return;
         }
-        var rows = suggestion.options.map(function (option) {
-          /* A name held by a submission in the queue is not free, so say who is
-             ahead by date rather than just skipping the number. */
-          var held = option.claims.map(function (c) {
-            return escapeHtml(c.name) + " (claimed " + escapeHtml(c.claimed) + ")";
-          }).join(", ");
-          return '<li><span class="tag t-' + (option.taken ? "pass" : "warn") + '">' +
-            option.acronym + '</span><span><b>' + option.proposal + '</b> — ' +
-            (option.taken
-              ? option.taken + (option.taken === 1
-                  ? " lineage already uses this acronym, "
-                  : " lineages already use this acronym, ") +
-                "up to " + option.highest + "."
-              : "no lineage uses this acronym yet.") +
-            (held
-              ? " Already claimed by a submission ahead of you: " + held +
-                ". Priority goes by the date a submission arrives."
-              : "") +
-            "</span></li>";
-        }).join("");
+        function optionRows(options) {
+          return options.map(function (option) {
+            /* A name held by a submission in the queue is not free, so say who is
+               ahead by date rather than just skipping the number. */
+            var held = option.claims.map(function (c) {
+              return escapeHtml(c.name) + " (claimed " + escapeHtml(c.claimed) + ")";
+            }).join(", ");
+            return '<li><span class="tag t-' + (option.taken ? "pass" : "warn") + '">' +
+              option.acronym + '</span><span><b>' + option.proposal + '</b> — ' +
+              (option.taken
+                ? option.taken + (option.taken === 1
+                    ? " lineage already uses this acronym, "
+                    : " lineages already use this acronym, ") +
+                  "up to " + option.highest + "."
+                : "no lineage uses this acronym yet.") +
+              (held
+                ? " Already claimed by a submission ahead of you: " + held +
+                  ". Priority goes by the date a submission arrives."
+                : "") +
+              "</span></li>";
+          }).join("");
+        }
+        /* The line introducing one host's acronyms, then its rows. Used once for
+           the typed name and, when that is an older synonym, again for the
+           current name -- the page said "both are offered below" and then showed
+           only the typed name's numbers. */
+        function acronymGroup(host, inUse, family, aside) {
+          return '<p class="fine">For <i>' + escapeHtml(host) + '</i>' +
+            (family ? ' (' + escapeHtml(family) + ')' : "") +
+            (aside ? ", " + aside : "") +
+            (inUse
+              ? ", following the acronym MalAvi already uses for this host:"
+              : ". Neither acronym is in use yet, so both are open — note that a lineage " +
+                "from this host may still exist under one of the older, less regular names:") +
+            "</p>";
+        }
+        var rows = optionRows(suggestion.options);
         /* What the avian checklist makes of the name. Reported, never enforced:
            taxonomy moves, the checklist is a dated snapshot, and a submitter who
            has found a bird it has not caught up with is right more often than the
@@ -833,8 +882,10 @@ const CHECKLIST_BEHIND_NOTE =
         var taxNote = "";
         if (tax.status === "synonym") {
           taxNote = '<p class="fine">The current name for <i>' + escapeHtml(tax.name) +
-            '</i> is <i>' + escapeHtml(tax.current) + '</i>. Both are offered below — ' +
-            'use whichever your paper will use, since the lineage name should match it.</p>';
+            '</i> is <i>' + escapeHtml(tax.current) + '</i>. The acronyms for ' +
+            (suggestion.synonym ? 'both names are shown below' : 'the name you typed are shown below') +
+            ' — follow whichever name your paper will use, since the lineage name ' +
+            'should match it.</p>';
         } else if (tax.status === "genus-only") {
           taxNote = '<p class="fine"><b>' + escapeHtml(tax.genus) + '</b> is a bird genus (' +
             escapeHtml(tax.family || "family unknown") + '), but <b><i>' + escapeHtml(tax.name) +
@@ -848,16 +899,19 @@ const CHECKLIST_BEHIND_NOTE =
             CHECKLIST_BEHIND_NOTE + '</p>';
         }
 
+        var synonymGroup = "";
+        if (tax.status === "synonym" && suggestion.synonym) {
+          synonymGroup = acronymGroup(suggestion.synonym.host, suggestion.synonym.inUse, null,
+              "the current name") +
+            '<ul class="checklist">' + optionRows(suggestion.synonym.options) + "</ul>";
+        }
+
         nameBox.innerHTML = taxNote +
-          '<p class="fine">For <i>' + suggestion.host + '</i>' +
-          (tax.status === "accepted" && tax.family
-            ? ' (' + escapeHtml(tax.family) + ')'
-            : "") +
-          (suggestion.inUse
-            ? ", following the acronym MalAvi already uses for this host:"
-            : ". Neither acronym is in use yet, so both are open — note that a lineage " +
-              "from this host may still exist under one of the older, less regular names:") +
-          '</p><ul class="checklist">' + rows + "</ul>" +
+          acronymGroup(suggestion.host, suggestion.inUse,
+            tax.status === "accepted" ? tax.family : null,
+            tax.status === "synonym" && suggestion.synonym ? "the name you typed" : "") +
+          '<ul class="checklist">' + rows + "</ul>" +
+          synonymGroup +
           '<p class="fine">Checked against release ' + escapeHtml(STATS.release) +
           (BIRDS ? ' and the eBird/Clements checklist' +
             (BIRDS.clootl_year ? ' (' + escapeHtml(String(BIRDS.clootl_year)) + ')' : '')

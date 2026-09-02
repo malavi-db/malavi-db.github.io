@@ -128,6 +128,45 @@ export function reverseComplement(seq) {
 }
 
 /**
+ * Split pasted text into FASTA records, one per header line.
+ *
+ * A bare sequence with no header is one unnamed record. A pasted FASTA with
+ * three records is three, each carrying the name from its header. This exists
+ * because cleanSequence() used to be handed the whole paste and simply dropped
+ * every header, which glued three sequences into one chimeric query: if any one
+ * of them matched a known lineage the page said "Already in MalAvi" and said
+ * nothing about the other two, one of which may have been new. So the page
+ * splits first, then checks each record on its own -- see checkSequences().
+ *
+ * Whitespace-only text before the first header is not a record. A header with
+ * nothing under it IS kept, so the page can say "nothing to check" against that
+ * name rather than silently losing it. Empty input yields one empty unnamed
+ * record for the same reason: the caller always has something to report on.
+ */
+export function splitFastaRecords(raw) {
+  const text = raw == null ? "" : String(raw);
+  const records = [];
+  let current = null;
+  for (const line of text.split(/\r?\n/)) {
+    if (line.trim().startsWith(">")) {
+      current = { name: line.trim().slice(1).trim() || null, lines: [] };
+      records.push(current);
+    } else {
+      if (!current) {
+        // Sequence before any header: an unnamed record, but only if there is
+        // actually something in it (blank lines ahead of a header are not).
+        if (!line.trim()) continue;
+        current = { name: null, lines: [] };
+        records.push(current);
+      }
+      current.lines.push(line);
+    }
+  }
+  if (records.length === 0) records.push({ name: null, lines: [] });
+  return records.map((record) => ({ name: record.name, raw: record.lines.join("\n") }));
+}
+
+/**
  * Pull a single nucleotide sequence out of whatever the user pasted.
  *
  * Accepts a bare sequence or FASTA. Drops header lines, whitespace, digits and
@@ -135,6 +174,10 @@ export function reverseComplement(seq) {
  * works), uppercases, and keeps only letters and gap characters. Anything else
  * that survives is reported to the user as ignored rather than silently
  * dropped -- see countContent.
+ *
+ * ONE record only. Given several FASTA records this concatenates them, which is
+ * never what anyone wants; callers with pasted text of unknown shape go through
+ * splitFastaRecords() first (checkSequences() does).
  */
 export function cleanSequence(raw) {
   if (raw == null) return "";
@@ -268,6 +311,23 @@ const EXACT_MATCH_CORROBORATION = K;
    threshold is the same one malaviR's lineage_screen() uses, and in this
    release it excludes column 1 and nothing else. */
 const MIN_SITE_COVERAGE = 0.5;
+
+/* ---- HOW MUCH OVERLAP AN EXACT MATCH NEEDS ----------------------------------
+   An exact match is scored over the positions where BOTH sides carry a single
+   concrete base (`jointlyInformative` in compareAtOffset). Zero differences
+   over 20 such positions is not an identity: a partial barcode laid over a
+   thinly covered reference agrees everywhere it can and disagrees nowhere, and
+   the old wording -- "Already in MalAvi, this is X" -- presented that as a
+   settled answer. Below this floor the checker still says the sequence is not
+   new (the never-call-a-known-lineage-new guarantee is untouched, and the
+   verdict stays "known") but it stops claiming it IS that lineage and asks for
+   a longer read instead.
+
+   The value is the same one the curation pipeline uses for the same decision
+   (MIN_COMPARABLE_TO_RANK in curation/src/malavi_curation/sequence_check.py),
+   so the page and the curator report cannot disagree about whether a match is
+   long enough to trust. */
+export const MIN_INFORMATIVE_FOR_IDENTITY = 300;
 
 const BASE_INDEX = { A: 0, C: 1, G: 2, T: 3 };
 
@@ -1104,12 +1164,51 @@ export function suggestLineageName(index, hostName, reservations, taxonomy) {
     };
   }
 
-  const genus = words[0].toUpperCase();
-  const epithet = words[1].toUpperCase();
+  const typed = acronymOptions(index, words[0], words[1], claims);
+  // What the avian checklist makes of the name, when one was supplied.
+  const verdict = checkHostName(taxonomy, words[0], words[1]);
 
-  /* Both widths that MalAvi uses, longer first: 3,336 of the 5,367 names in this
-     release use a six-letter acronym and 1,343 a five-letter one. A duplicate is
-     dropped, which is what happens when the genus is only two letters long. */
+  /* When the typed name is an older synonym, the acronyms for the CURRENT name
+     are worked out as well. The page tells the submitter about the current name
+     and says both are offered; it used to offer only the typed name's acronyms,
+     so someone who typed Abrornis maculipennis was told about Phylloscopus
+     maculipennis and then handed a number from the ABRMAC sequence with no way
+     to see what PHYMAC had used. Which name to follow is still the submitter's
+     call -- it should be the one their paper uses -- so neither set is chosen. */
+  let synonym = null;
+  if (verdict.status === "synonym") {
+    const currentWords = String(verdict.current).split(/[^A-Za-z]+/).filter((w) => w.length >= 3);
+    if (currentWords.length >= 2) {
+      synonym = acronymOptions(index, currentWords[0], currentWords[1], claims);
+    }
+  }
+
+  return {
+    ok: true,
+    host: typed.host,
+    options: typed.options,
+    inUse: typed.inUse,
+    // Whether any pending claim bore on this host at all, so the page can say
+    // when it has checked the queue and found nothing rather than staying silent.
+    claimsChecked: claims.length > 0,
+    claimed: typed.claimed,
+    taxonomy: verdict,
+    // The current name's own acronyms when the typed name is a synonym; null
+    // otherwise. Same shape as the top level: { host, options, inUse, claimed }.
+    synonym
+  };
+}
+
+/**
+ * The acronyms one binomial yields, and what each has already used.
+ *
+ * Both widths that MalAvi uses, longer first: 3,336 of the 5,367 names in this
+ * release use a six-letter acronym and 1,343 a five-letter one. A duplicate is
+ * dropped, which is what happens when the genus is only two letters long.
+ */
+function acronymOptions(index, genusWord, epithetWord, claims) {
+  const genus = genusWord.toUpperCase();
+  const epithet = epithetWord.toUpperCase();
   const acronyms = [...new Set([
     genus.slice(0, 3) + epithet.slice(0, 3),
     genus.slice(0, 2) + epithet.slice(0, 3)
@@ -1120,17 +1219,10 @@ export function suggestLineageName(index, hostName, reservations, taxonomy) {
   options.sort((a, b) => b.taken - a.taken);
 
   return {
-    ok: true,
-    host: words[0].charAt(0).toUpperCase() + words[0].slice(1).toLowerCase() +
-      " " + epithet.toLowerCase(),
+    host: genus.charAt(0) + genusWord.slice(1).toLowerCase() + " " + epithet.toLowerCase(),
     options,
     inUse: options.some((o) => o.taken > 0),
-    // Whether any pending claim bore on this host at all, so the page can say
-    // when it has checked the queue and found nothing rather than staying silent.
-    claimsChecked: claims.length > 0,
-    claimed: options.some((o) => o.claims.length > 0),
-    // What the avian checklist makes of the name, when one was supplied.
-    taxonomy: checkHostName(taxonomy, words[0], words[1])
+    claimed: options.some((o) => o.claims.length > 0)
   };
 }
 
@@ -1200,8 +1292,26 @@ export function checkHostName(checklist, rawGenus, rawEpithet) {
 }
 
 /**
- * The full check: content validation plus identity, as a plain data structure.
- * Rendering lives in the page; this returns only findings.
+ * Check everything the user pasted, one FASTA record at a time.
+ *
+ * Returns one entry per record, in the order pasted, each as
+ * `{ name, result }` where `name` is the FASTA header (null for a bare
+ * sequence) and `result` is what checkSequence() returns for that record on
+ * its own. The page reports each record under its own name, so "Already in
+ * MalAvi" for one record cannot hide a new lineage in the next.
+ */
+export function checkSequences(index, raw) {
+  return splitFastaRecords(raw).map((record) => ({
+    name: record.name,
+    result: checkSequence(index, record.raw)
+  }));
+}
+
+/**
+ * The full check for ONE sequence: content validation plus identity, as a
+ * plain data structure. Rendering lives in the page; this returns only
+ * findings. Pasted text that may hold several FASTA records goes through
+ * checkSequences() instead.
  *
  * `verdict` is one of:
  *   "stop"    something is wrong with the input, or it is too short to judge
@@ -1218,7 +1328,7 @@ export function checkSequence(index, raw) {
     return {
       verdict: "stop",
       title: "Nothing to check",
-      message: "Paste one nucleotide sequence, with or without a FASTA header.",
+      message: "Paste a nucleotide sequence, with or without a FASTA header.",
       content,
       checks
     };
@@ -1364,12 +1474,53 @@ export function checkSequence(index, raw) {
        still be undecidable: a short sequence may sit inside many lineages, and
        claiming one of them would be a guess dressed as a result. */
     const ambiguousIdentity = names.length > 1;
+    const genusText = [...new Set(match.ties.flatMap((t) => t.entry.genus))].join(" / ");
 
-    checks.push({
-      state: "pass",
-      label: "Genus",
-      text: [...new Set(match.ties.flatMap((t) => t.entry.genus))].join(" / ")
-    });
+    /* Exact -- but over how many positions? See MIN_INFORMATIVE_FOR_IDENTITY.
+       The verdict stays "known" so this can never be mistaken for a new lineage,
+       and `lowCoverage` tells the page to paint it as a caution rather than a
+       tick, because the title no longer says "this is X". */
+    const informative = best.jointlyInformative;
+    if (informative < MIN_INFORMATIVE_FOR_IDENTITY) {
+      checks.push({
+        state: "warn",
+        label: "Genus",
+        text: `${genusText}, read from only ${informative} positions.`
+      });
+      checks.push({
+        state: "warn",
+        label: "Identity",
+        text:
+          `Identical to ${nameList} over the ${informative} positions where both carry ` +
+          `a definite base. That overlap is too short to call it the same lineage: at ` +
+          `least ${MIN_INFORMATIVE_FOR_IDENTITY} are needed.`
+      });
+      checks.push({
+        state: "warn",
+        label: "Naming",
+        text:
+          "Nothing can be named from this. It is not new, and it is not confirmed as " +
+          "an existing lineage either."
+      });
+      return {
+        verdict: "known",
+        lowCoverage: true,
+        title: ambiguousIdentity
+          ? `Matches ${names.length} lineages, but over only ${informative} bp`
+          : `Matches ${nameList}, but over only ${informative} bp`,
+        message:
+          `This sequence is identical to ${nameList} over the ${informative} positions ` +
+          "both cover, which is too short to call it the same lineage. A longer read " +
+          "that covers more of the barcode is needed before this can be called " +
+          (ambiguousIdentity ? "one of these" : nameList) + " or anything new. " +
+          `Curators apply the same floor of ${MIN_INFORMATIVE_FOR_IDENTITY} positions.`,
+        content,
+        match,
+        checks
+      };
+    }
+
+    checks.push({ state: "pass", label: "Genus", text: genusText });
     checks.push({
       state: ambiguousIdentity ? "warn" : "pass",
       label: "Identity",
