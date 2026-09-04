@@ -1,6 +1,6 @@
 {
   "release": "2026-03-23",
-  "generated": "2026-08-05T19:35:03Z",
+  "generated": "2026-09-04T19:33:31Z",
   "malaviR_bundled": "2026-03-23",
   "alignment_length_bp": 479,
   "totals": {
@@ -658,7 +658,7 @@
   ],
   "taxonomy_source": {
     "clootl_year": 2025,
-    "malaviR_version": "1.0.0"
+    "malaviR_version": "1.1.2"
   },
   "integrity": {
     "grand_lineage_summary_rows": 5368,
