@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-15T16:12:46Z",
-  "n_contributors": 2,
+  "generated": "2026-09-15T17:52:21Z",
+  "n_contributors": 1,
   "contributors": [
     {
       "name": "Lis Vieira",
@@ -9,14 +9,6 @@
       "records": 11,
       "submissions": 1,
       "since": "2026-09-02"
-    },
-    {
-      "name": "Vincenzo Ellis",
-      "institution": "University of Delaware",
-      "lineages": 2,
-      "records": 2,
-      "submissions": 1,
-      "since": "2026-08-20"
     }
   ]
 }
