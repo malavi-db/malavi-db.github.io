@@ -1,6 +1,6 @@
 {
-  "release": "2026-03-23",
-  "generated": "2026-08-20T13:47:14Z",
+  "release": "2026-09-15",
+  "generated": "2026-09-15T16:12:46Z",
   "n_names": 33,
   "names": [
     {
@@ -46,6 +46,10 @@
     {
       "name": "ANSPLA10",
       "claimed": "2026-08-19"
+    },
+    {
+      "name": "CARCRI03",
+      "claimed": "2026-09-02"
     },
     {
       "name": "FULATR03",
@@ -112,16 +116,12 @@
       "claimed": "2026-08-19"
     },
     {
-      "name": "NECMON01",
-      "claimed": "2026-08-20"
-    },
-    {
-      "name": "NECMON02",
-      "claimed": "2026-08-20"
-    },
-    {
       "name": "NYCNYC03",
       "claimed": "2026-08-19"
+    },
+    {
+      "name": "PENOBS02",
+      "claimed": "2026-09-02"
     },
     {
       "name": "PODCRI01",

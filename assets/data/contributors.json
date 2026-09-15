@@ -1,7 +1,15 @@
 {
-  "generated": "2026-08-20T13:47:14Z",
-  "n_contributors": 1,
+  "generated": "2026-09-15T16:12:46Z",
+  "n_contributors": 2,
   "contributors": [
+    {
+      "name": "Lis Vieira",
+      "institution": "Universidade Federal de Minas Gerais",
+      "lineages": 2,
+      "records": 11,
+      "submissions": 1,
+      "since": "2026-09-02"
+    },
     {
       "name": "Vincenzo Ellis",
       "institution": "University of Delaware",
