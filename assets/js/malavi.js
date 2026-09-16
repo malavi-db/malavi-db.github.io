@@ -41,7 +41,11 @@ const optional = (url) =>
    cannot say whether the host name is a real bird. It is checked against the WHOLE
    checklist, not MalAvi's own hosts -- a parasite sequenced from a bird nobody has
    screened before is exactly the case a new lineage arises from. */
-const [STATS, TABLE_INDEX, MAP, REPORTS, QUEUE, CONTRIBUTORS, RESERVED, BIRDS] = await Promise.all([
+/* POINTS is every sampling site with coordinates (export/build_site_points.R), for
+   the map page. Optional like the feeds above: without it the map page says so
+   and the rest of the site is unaffected. */
+const [STATS, TABLE_INDEX, MAP, REPORTS, QUEUE, CONTRIBUTORS, RESERVED, BIRDS, POINTS] =
+  await Promise.all([
   feed("assets/data/site_stats.json"),
   feed("assets/data/tables_index.json"),
   feed("assets/data/world_map.json"),
@@ -49,7 +53,8 @@ const [STATS, TABLE_INDEX, MAP, REPORTS, QUEUE, CONTRIBUTORS, RESERVED, BIRDS] =
   optional("assets/data/queue.json"),
   optional("assets/data/contributors.json"),
   optional("assets/data/reserved_names.json"),
-  optional("assets/data/bird_names.json")
+  optional("assets/data/bird_names.json"),
+  optional("assets/data/site_points.json")
 ]);
 
 /* The one sentence every "the checklist does not know this bird" answer ends on.
@@ -95,6 +100,8 @@ const CHECKLIST_BEHIND_NOTE =
     Array.prototype.forEach.call(document.querySelectorAll(".view"), function (v) {
       v.classList.toggle("active", v.id === "view-" + name);
     });
+    /* Let a view that has to measure itself (the map) know it is on screen now. */
+    document.dispatchEvent(new CustomEvent("malavi:view", { detail: name }));
     window.scrollTo({ top: 0, behavior: "instant" });
   }
   document.getElementById("nav").addEventListener("click", function (e) {
@@ -951,4 +958,284 @@ const CHECKLIST_BEHIND_NOTE =
       });
     }
   });
+
+  /* ---------------------------------------------------------------- map view */
+  /* The sampling-site map: the function Tamara's Shiny app served on the old
+     site, done in the browser. POINTS carries one entry per site with its
+     records as index arrays into four string tables (lineages, genera, hosts,
+     references), see export/build_site_points.R. Filtering is by host species,
+     parasite genus and lineage; a site is drawn when at least one of its
+     records matches, colored by the genus of its matching records, and its
+     popup lists exactly the matching records. Leaflet is loaded in index.html;
+     the map itself is created the first time the view is shown, because Leaflet
+     sizes itself from a container that has to be visible. */
+  (function () {
+    var summary = document.getElementById("mapSummary");
+    var legend = document.getElementById("mapLegend");
+    var note = document.getElementById("mapNote");
+    var holder = document.getElementById("siteMap");
+    if (!document.getElementById("mapHost") || !holder) return;
+
+    if (!POINTS || !POINTS.sites) {
+      summary.textContent = "The site coordinates have not been exported for this release.";
+      return;
+    }
+    if (typeof L === "undefined") {
+      summary.textContent = "The map library could not be loaded. The records are still " +
+        "in the Hosts and Sites table.";
+      return;
+    }
+
+    /* Genus colors from the same tokens as the charts, read once from CSS so the
+       theme toggle and the palette stay the single source. */
+    function genusColor(g) {
+      var slot = SLOT[g];
+      var v = slot ? getComputedStyle(document.documentElement).getPropertyValue(slot.varName) : "";
+      return (v || "#6E677F").trim();
+    }
+    function sci(name) { return '<span class="sci">' + escapeHtml(name) + "</span>"; }
+
+    /* Each of the three fields is one box: scroll its list, or type to narrow it. The
+       lists depend on each other -- choosing a genus leaves only that genus's lineages
+       and hosts -- because each is rebuilt from the records that match the OTHER two
+       choices, so no combination without records can be chosen. */
+    function combo(inputId, values, italic, allLabel, onChange) {
+      var input = document.getElementById(inputId);
+      var wrap = input.parentNode;
+      var list = wrap.querySelector(".combo-list");
+      var clearBtn = wrap.querySelector(".combo-clear");
+      var state = { selected: -1, allowed: null };
+      var LIMIT = 150;
+      function visible() {
+        var text = input.value.trim().toLowerCase();
+        var out = [];
+        for (var i = 0; i < values.length; i++) {
+          if (state.allowed && !state.allowed[i]) continue;
+          if (text && values[i].toLowerCase().indexOf(text) < 0) continue;
+          out.push(i);
+        }
+        return out;
+      }
+      function render() {
+        var idx = visible();
+        var html = idx.slice(0, LIMIT).map(function (i) {
+          return '<li role="option" data-i="' + i + '"' +
+            (i === state.selected ? ' aria-selected="true"' : "") +
+            (italic ? ' class="sci"' : "") + ">" + escapeHtml(values[i]) + "</li>";
+        }).join("");
+        if (idx.length > LIMIT) {
+          html += '<li class="more">\u2026 ' + n(idx.length - LIMIT) + " more; keep typing</li>";
+        }
+        if (!idx.length) html = '<li class="more">No match</li>';
+        list.innerHTML = html;
+      }
+      function open() { render(); list.hidden = false; input.setAttribute("aria-expanded", "true"); }
+      function close() { list.hidden = true; input.setAttribute("aria-expanded", "false"); }
+      function select(i, quiet) {
+        state.selected = i;
+        input.value = i < 0 ? "" : values[i];
+        close();
+        if (!quiet) onChange();
+      }
+      input.addEventListener("focus", open);
+      input.addEventListener("click", open);
+      input.addEventListener("input", function () {
+        var had = state.selected;
+        state.selected = -1;
+        open();
+        if (had >= 0) onChange();
+      });
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          var first = list.querySelector("li[data-i]");
+          if (first) select(Number(first.dataset.i));
+          e.preventDefault();
+        } else if (e.key === "Escape") {
+          close();
+        }
+      });
+      input.addEventListener("blur", function () {
+        window.setTimeout(function () {
+          close();
+          if (state.selected < 0) input.value = "";
+        }, 150);
+      });
+      list.addEventListener("mousedown", function (e) {
+        var li = e.target.closest("li[data-i]");
+        if (li) { e.preventDefault(); select(Number(li.dataset.i)); }
+      });
+      clearBtn.addEventListener("click", function () { select(-1); input.focus(); });
+      return {
+        get value() { return state.selected < 0 ? "" : String(state.selected); },
+        setAllowed: function (allowed) {
+          state.allowed = allowed;
+          var count = 0;
+          for (var i = 0; i < values.length; i++) if (allowed[i]) count++;
+          input.placeholder = allLabel + " (" + n(count) + ")";
+          if (state.selected >= 0 && !allowed[state.selected]) select(-1, true);
+          if (!list.hidden) render();
+        },
+        reset: function () { select(-1, true); }
+      };
+    }
+    var TRIPLES = (function () {
+      var seen = {}, out = [];
+      POINTS.sites.forEach(function (site) {
+        site.r.forEach(function (rec) {
+          var key = rec[0] + "|" + rec[1] + "|" + rec[2];
+          if (!seen[key]) { seen[key] = true; out.push([rec[0], rec[1], rec[2]]); }
+        });
+      });
+      return out;
+    })();
+    var hostSel, genusSel, lineageSel;
+    function selected(box) { return box.value === "" ? -1 : Number(box.value); }
+    function rebuildOptions() {
+      var want = { l: selected(lineageSel), g: selected(genusSel), h: selected(hostSel) };
+      var allowed = { l: {}, g: {}, h: {} };
+      TRIPLES.forEach(function (t) {
+        var okL = want.l < 0 || t[0] === want.l, okG = want.g < 0 || t[1] === want.g,
+            okH = want.h < 0 || t[2] === want.h;
+        if (okG && okH) allowed.l[t[0]] = true;
+        if (okL && okH && t[1] >= 0) allowed.g[t[1]] = true;
+        if (okL && okG) allowed.h[t[2]] = true;
+      });
+      hostSel.setAllowed(allowed.h); genusSel.setAllowed(allowed.g); lineageSel.setAllowed(allowed.l);
+    }
+    function changed() { rebuildOptions(); draw(); }
+    hostSel = combo("mapHost", POINTS.hosts, true, "All host species", changed);
+    genusSel = combo("mapGenus", POINTS.genera, true, "All genera", changed);
+    lineageSel = combo("mapLineage", POINTS.lineages, false, "All lineages", changed);
+    rebuildOptions();
+
+    legend.innerHTML = POINTS.genera.map(function (g) {
+      return "<span><i style=\"background:" + genusColor(g) + "\"></i>" + sci(g) + "</span>";
+    }).join("") + "<span><i style=\"background:#6E677F\"></i>several genera at one site</span>";
+
+    var map = null, layer = null;
+
+    /* Records at a site that match the current selection: [lineageIdx, genusIdx,
+       hostIdx, refIdx, found, tested]. -1 means the payload could not place it. */
+    function matching(site, want) {
+      return site.r.filter(function (rec) {
+        return (want.h < 0 || rec[2] === want.h) &&
+               (want.g < 0 || rec[1] === want.g) &&
+               (want.l < 0 || rec[0] === want.l);
+      });
+    }
+
+    function popupFor(site, recs) {
+      var rows = recs.slice(0, 60).map(function (rec) {
+        var prev = (rec[4] === null || rec[4] === undefined) ? "" :
+          rec[4] + (rec[5] === null || rec[5] === undefined ? "" : " / " + rec[5]);
+        return "<tr><td><b>" + escapeHtml(POINTS.lineages[rec[0]]) + "</b></td>" +
+          "<td>" + sci(POINTS.hosts[rec[2]]) + "</td>" +
+          "<td>" + prev + "</td>" +
+          "<td>" + escapeHtml(POINTS.references[rec[3]]) + "</td></tr>";
+      }).join("");
+      var more = recs.length > 60 ? "<p class=\"fine\">and " + (recs.length - 60) +
+        " more records at this site; see the Hosts and Sites table.</p>" : "";
+      return "<b>" + escapeHtml(site.s || "Unnamed site") + "</b>" +
+        (site.c ? ", " + escapeHtml(site.c) : "") +
+        "<br><span style=\"color:var(--ink-3)\">" + recs.length + " matching record" +
+        (recs.length === 1 ? "" : "s") + " · " + site.la + ", " + site.lo + "</span>" +
+        "<table><tr><td>Lineage</td><td>Host</td><td>Found / tested</td><td>Study</td></tr>" +
+        rows + "</table>" + more;
+    }
+
+    function draw() {
+      if (!map) return;
+      var want = { h: hostSel.value === "" ? -1 : Number(hostSel.value),
+                   g: genusSel.value === "" ? -1 : Number(genusSel.value),
+                   l: lineageSel.value === "" ? -1 : Number(lineageSel.value) };
+      if (layer) { layer.remove(); }
+      layer = L.layerGroup();
+      var nSites = 0, nRecords = 0, bounds = [];
+      POINTS.sites.forEach(function (site) {
+        var recs = matching(site, want);
+        if (!recs.length) return;
+        nSites++; nRecords += recs.length;
+        var genera = {};
+        recs.forEach(function (rec) { if (rec[1] >= 0) genera[POINTS.genera[rec[1]]] = true; });
+        var names = Object.keys(genera);
+        var color = names.length === 1 ? genusColor(names[0]) : "#6E677F";
+        var marker = L.circleMarker([site.la, site.lo], {
+          radius: Math.min(4 + Math.sqrt(recs.length), 14),
+          color: color, weight: 1, fillColor: color, fillOpacity: 0.55
+        });
+        marker.bindPopup(popupFor(site, recs), { maxWidth: 420 });
+        marker.addTo(layer);
+        bounds.push([site.la, site.lo]);
+      });
+      layer.addTo(map);
+      var filtered = want.h >= 0 || want.g >= 0 || want.l >= 0;
+      summary.textContent = n(nSites) + " site" + (nSites === 1 ? "" : "s") + ", " +
+        n(nRecords) + " record" + (nRecords === 1 ? "" : "s") +
+        (filtered ? " match the selection." : " with coordinates in release " + POINTS.release + ".");
+      if (filtered && bounds.length) {
+        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 7 });
+      } else if (!filtered) {
+        map.setView([15, 10], 2);
+      }
+    }
+
+    /* The site's own basemap as a vector layer. world_map.json holds the country
+       outlines as SVG paths in a plain equirectangular projection (1000 units per
+       360 degrees, top edge at 84 N), so each vertex converts back to a coordinate
+       with two divisions. Drawn from the site's assets, it needs no tile server:
+       the map works offline, in a preview, and on a reader's first visit without
+       a third party seeing it. */
+    function landFromBasemap() {
+      var scale = 360 / MAP.width, top = 84;
+      var features = [];
+      Object.keys(MAP.paths).forEach(function (name) {
+        var rings = [];
+        MAP.paths[name].split("Z").forEach(function (sub) {
+          var ring = [];
+          var re = /[ML](-?[\d.]+),(-?[\d.]+)/g, m;
+          while ((m = re.exec(sub)) !== null) {
+            ring.push([Number(m[1]) * scale - 180, top - Number(m[2]) * scale]);
+          }
+          if (ring.length >= 3) { ring.push(ring[0]); rings.push([ring]); }
+        });
+        if (rings.length) {
+          features.push({ type: "Feature", properties: { name: name },
+                          geometry: { type: "MultiPolygon", coordinates: rings } });
+        }
+      });
+      return { type: "FeatureCollection", features: features };
+    }
+    function landStyle() {
+      var s = getComputedStyle(document.documentElement);
+      return { fillColor: s.getPropertyValue("--map-land").trim() || "#E2DFEC",
+               color: s.getPropertyValue("--map-land-edge").trim() || "#CFCADF",
+               weight: 0.6, fillOpacity: 1 };
+    }
+
+    function init() {
+      if (map) { map.invalidateSize(); return; }
+      map = L.map(holder, { worldCopyJump: true, minZoom: 1, maxZoom: 8 });
+      map.attributionControl.setPrefix("");
+      L.geoJSON(landFromBasemap(), { style: landStyle, interactive: false }).addTo(map);
+      map.setView([15, 10], 2);
+      note.textContent = "Release " + POINTS.release + ": " + n(POINTS.n_placed) + " of " +
+        n(POINTS.n_records) + " host records carry coordinates the map can read" +
+        (POINTS.unparsed && POINTS.unparsed.length ? "; " + POINTS.unparsed.length +
+          " coordinate cell" + (POINTS.unparsed.length === 1 ? "" : "s") +
+          " could not be read and " + (POINTS.unparsed.length === 1 ? "is" : "are") +
+          " not shown" : "") +
+        ". Records without a site are in the tables but not here. Point size grows with " +
+        "the number of matching records; gray points hold records of more than one genus.";
+      draw();
+    }
+
+    document.getElementById("mapReset").addEventListener("click", function () {
+      hostSel.reset(); genusSel.reset(); lineageSel.reset(); rebuildOptions(); draw();
+    });
+    document.addEventListener("malavi:view", function (e) {
+      if (e.detail === "map") init();
+    });
+    if (document.getElementById("view-map").classList.contains("active")) init();
+  })();
+
 })();

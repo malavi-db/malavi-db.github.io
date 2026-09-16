@@ -1,71 +1,71 @@
 {
-  "release": "2026-03-23",
-  "generated": "2026-09-04T19:48:19Z",
-  "malaviR_bundled": "2026-03-23",
+  "release": "2026-09-15",
+  "generated": "2026-09-16T19:33:39Z",
+  "malaviR_bundled": "2026-09-15",
   "alignment_length_bp": 479,
   "totals": {
-    "lineages": 5367,
-    "host_records": 18493,
-    "host_species": 2339,
-    "host_genera": 965,
+    "lineages": 5550,
+    "host_records": 18751,
+    "host_species": 2348,
+    "host_genera": 970,
     "host_families": 137,
     "host_orders": 31,
     "countries": 123,
-    "references": 526,
-    "morpho_species": 124,
-    "morpho_links": 256,
+    "references": 531,
+    "morpho_species": 125,
+    "morpho_links": 260,
     "vector_records": 610,
     "vector_species": 97
   },
   "genera": [
     {
       "key": "Plasmodium",
-      "lineages": 1628,
-      "records": 7659,
-      "host_species": 1523,
-      "host_genera": 719,
+      "lineages": 1660,
+      "records": 7754,
+      "host_species": 1531,
+      "host_genera": 722,
       "host_families": 116,
       "host_orders": 31,
       "countries": 107,
-      "studies": 401,
+      "studies": 408,
       "map_countries": 107,
       "map_countries_shown": 91,
-      "map_studies": 423,
-      "map_studies_shown": 422
+      "map_studies": 430,
+      "map_studies_shown": 429
     },
     {
       "key": "Haemoproteus",
-      "lineages": 2091,
-      "records": 6668,
-      "host_species": 1502,
-      "host_genera": 699,
-      "host_families": 119,
-      "host_orders": 25,
+      "lineages": 2217,
+      "records": 6802,
+      "host_species": 1511,
+      "host_genera": 704,
+      "host_families": 120,
+      "host_orders": 26,
       "countries": 109,
-      "studies": 377,
+      "studies": 386,
       "map_countries": 109,
       "map_countries_shown": 92,
-      "map_studies": 393,
-      "map_studies_shown": 390
+      "map_studies": 402,
+      "map_studies_shown": 399
     },
     {
       "key": "Leucocytozoon",
-      "lineages": 1644,
-      "records": 4145,
-      "host_species": 788,
-      "host_genera": 408,
-      "host_families": 92,
-      "host_orders": 23,
+      "lineages": 1673,
+      "records": 4195,
+      "host_species": 797,
+      "host_genera": 414,
+      "host_families": 93,
+      "host_orders": 24,
       "countries": 72,
-      "studies": 204,
+      "studies": 208,
       "map_countries": 72,
       "map_countries_shown": 67,
-      "map_studies": 213,
-      "map_studies_shown": 213
+      "map_studies": 217,
+      "map_studies_shown": 217
     }
   ],
   "genus_order": ["Plasmodium", "Haemoproteus", "Leucocytozoon"],
-  "unassigned_lineages": 4,
+  "unassigned_lineages": 0,
   "country_studies": {
     "Algeria": {
       "P": 1,
@@ -95,7 +95,7 @@
     },
     "Austria": {
       "P": 8,
-      "H": 7,
+      "H": 8,
       "L": 7
     },
     "Azerbaijan": {
@@ -164,14 +164,14 @@
       "H": 1
     },
     "Chile": {
-      "P": 10,
-      "H": 7,
-      "L": 7
+      "P": 11,
+      "H": 8,
+      "L": 8
     },
     "China": {
-      "P": 10,
-      "H": 7,
-      "L": 5
+      "P": 11,
+      "H": 8,
+      "L": 6
     },
     "Christmas Island": {
       "H": 2
@@ -193,7 +193,7 @@
     },
     "Czech Republic": {
       "P": 10,
-      "H": 6,
+      "H": 7,
       "L": 6
     },
     "Denmark": {
@@ -233,7 +233,7 @@
     },
     "France": {
       "P": 14,
-      "H": 12,
+      "H": 13,
       "L": 2
     },
     "French Polynesia": {
@@ -489,9 +489,9 @@
       "P": 2
     },
     "Serbia": {
-      "P": 1,
-      "H": 1,
-      "L": 1
+      "P": 3,
+      "H": 3,
+      "L": 3
     },
     "Seychelles": {
       "P": 1,
@@ -525,8 +525,8 @@
       "L": 10
     },
     "Switzerland": {
-      "P": 9,
-      "H": 8,
+      "P": 10,
+      "H": 9,
       "L": 4
     },
     "Tanzania": {
@@ -569,8 +569,8 @@
       "L": 3
     },
     "United States": {
-      "P": 59,
-      "H": 60,
+      "P": 61,
+      "H": 62,
       "L": 45
     },
     "Uruguay": {
@@ -603,35 +603,35 @@
     }
   },
   "countries_unplaced": ["Antigua and Barbuda", "Ascension Island", "Bermuda", "Cape Verde", "Cayman Islands", "Christmas Island", "Comoros", "Dominica", "French Polynesia", "Grenada", "Guadeloupe", "Malta", "Martinique", "Mauritius", "Mayotte", "Montserrat", "Netherlands Antilles", "Northern Mariana Islands", "Réunion", "Saint Lucia", "São Tomé and Príncipe", "Seychelles", "Singapore"],
-  "map_studies": 564,
-  "map_studies_shown": 561,
+  "map_studies": 572,
+  "map_studies_shown": 569,
   "tables": [
     {
       "id": "hosts_and_sites",
       "title": "Hosts and Sites",
       "group": "release",
-      "rows": 18493,
+      "rows": 18751,
       "description": "Every record of a lineage found in a host: the host taxonomy, where it was found, prevalence where the study reported it, and the reference."
     },
     {
       "id": "grand_lineage_summary",
       "title": "Grand Lineage Summary",
       "group": "release",
-      "rows": 5368,
+      "rows": 5551,
       "description": "One row per lineage: its GenBank accession, the morphospecies it is linked to if any, and how many host species, genera, families and orders it has been found in."
     },
     {
       "id": "references",
       "title": "Table of References",
       "group": "release",
-      "rows": 526,
+      "rows": 531,
       "description": "Every published paper whose records have been entered into MalAvi."
     },
     {
       "id": "morpho_species",
       "title": "Morpho Species Summary",
       "group": "release",
-      "rows": 256,
+      "rows": 260,
       "description": "Lineages that have been linked to a morphologically described species, with the reference for the link."
     },
     {
@@ -645,28 +645,28 @@
       "id": "lineage_names",
       "title": "Table of Lineage Names",
       "group": "release",
-      "rows": 3102,
+      "rows": 3115,
       "description": "MalAvi lineage names against the names used in the original publications. Derived from the ALT_NAME column of the hosts table."
     },
     {
       "id": "taxonomy",
       "title": "Host taxonomy key",
       "group": "derived",
-      "rows": 2339,
+      "rows": 2348,
       "description": "Every host species in MalAvi matched to the eBird/Clements name and to the tip label used in the clootl phylogeny, with the order and family that follow and how each name was matched. The two names are the same species, but a tree tip can keep an older genus placement, so the columns do not always agree."
     }
   ],
   "taxonomy_source": {
     "clootl_year": 2025,
-    "malaviR_version": "1.2.0"
+    "malaviR_version": "1.3.0"
   },
   "integrity": {
-    "grand_lineage_summary_rows": 5368,
-    "grand_lineage_summary_lineages": 5367,
+    "grand_lineage_summary_rows": 5551,
+    "grand_lineage_summary_lineages": 5550,
     "lineages_on_multiple_rows": ["TUPHI01"],
-    "references_table_rows": 526,
-    "reference_names_in_hosts": 532,
-    "cited_but_not_in_refs": 63,
+    "references_table_rows": 531,
+    "reference_names_in_hosts": 539,
+    "cited_but_not_in_refs": 64,
     "in_refs_but_never_cited": 56,
     "host_records_missing_ref": 6,
     "host_records_unknown_country": 60,
@@ -675,20 +675,8 @@
   },
   "data_issues": [
     {
-      "title": "Alignment genus prefix contradicts GENUS_NAME",
-      "text": "L_MEAPI23 has the Leucocytozoon prefix (L_) in the alignment, but in the Grand Lineage Summary table it is listed as Plasmodium"
-    },
-    {
-      "title": "No parasite genus listed",
-      "text": "7 lineages in the Grand Lineage Summary table do not have a parasite genus listed and are given the prefix N_ in the alignment file; lineages are: ACCNIS06, ACCNIS07, ACCNIS08, ACCNIS09, BUBT1, BUTLIV02, CIAE08"
-    },
-    {
       "title": "One lineage listed as more than one morphospecies",
       "text": "Lineage TUPHI01 is listed as two morphospecies, Haemoproteus minutus and H. asymmetricus"
-    },
-    {
-      "title": "Lineages in the alignment but not the table, or the reverse",
-      "text": "The following lineages are found in the alignment but not the Grand Lineage Summary Table: SETCAE02. The following lineages are found in the Grand Lineage Summary table but not the alignment: PLOCUC14, PLOCUC15, PLOCUC16, SETCAE01."
     }
   ]
 }

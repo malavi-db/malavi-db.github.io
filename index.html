@@ -8,7 +8,13 @@
   haemosporidians (Plasmodium, Haemoproteus, Leucocytozoon), organized around lineages of the
   mitochondrial cytochrome b gene.">
 <link rel="icon" href="assets/img/favicon.ico">
-<link rel="stylesheet" href="assets/css/malavi.css?v=dc7e5a1e">
+<link rel="stylesheet" href="assets/css/malavi.css?v=c086ee41">
+<!-- Leaflet, for the map page only. Pinned; loaded here rather than lazily so the
+     map view can draw the moment it is opened. -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+  crossorigin="anonymous" referrerpolicy="no-referrer">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 <header class="masthead">
@@ -25,6 +31,7 @@
       <button data-view="tables">Tables</button>
       <button data-view="submit">Submit data</button>
       <button data-view="toolkit">Toolkit</button>
+      <button data-view="map">Map</button>
       <button data-view="queue">Queue</button>
       <button data-view="about">About</button>
       <a href="how-it-works.html">How it works</a>
@@ -405,6 +412,36 @@
     </div>
   </section>
 
+  <!-- ================================= MAP ================================ -->
+  <section class="view" id="view-map">
+    <div class="stack">
+      <div>
+        <h1 class="page display">Where the records come from</h1>
+        <p class="lead">Every sampling site with coordinates in the database. Choose a host
+          species, a parasite genus, or both, and the map shows the sites where records match;
+          each point opens to the lineages, studies and prevalence reported there.</p>
+      </div>
+
+      <div class="mapctl" id="mapControls">
+        <label>Host species
+          <span class="combo"><input id="mapHost" type="text" autocomplete="off" placeholder="All host species" role="combobox" aria-expanded="false" aria-controls="mapHostList"><button type="button" class="combo-clear" aria-label="Clear host species">×</button><ul class="combo-list" id="mapHostList" role="listbox" hidden></ul></span>
+        </label>
+        <label>Parasite genus
+          <span class="combo"><input id="mapGenus" type="text" autocomplete="off" placeholder="All genera" role="combobox" aria-expanded="false" aria-controls="mapGenusList"><button type="button" class="combo-clear" aria-label="Clear parasite genus">×</button><ul class="combo-list" id="mapGenusList" role="listbox" hidden></ul></span>
+        </label>
+        <label>Lineage
+          <span class="combo"><input id="mapLineage" type="text" autocomplete="off" placeholder="All lineages" role="combobox" aria-expanded="false" aria-controls="mapLineageList"><button type="button" class="combo-clear" aria-label="Clear lineage">×</button><ul class="combo-list" id="mapLineageList" role="listbox" hidden></ul></span>
+        </label>
+        <button type="button" class="ghost" id="mapReset">Reset</button>
+      </div>
+      <p class="map-summary" id="mapSummary"></p>
+
+      <div class="leaflet-wrap" id="siteMap" role="region" aria-label="Sampling sites"></div>
+      <div class="map-legend" id="mapLegend"></div>
+      <p class="fine" id="mapNote"></p>
+    </div>
+  </section>
+
   <!-- ================================ QUEUE =============================== -->
   <section class="view" id="view-queue">
     <div class="stack">
@@ -575,6 +612,6 @@
     <a href="mailto:malaviadmin@gmail.com?subject=MalAvi">Contact the curators</a>
   </div>
 </footer>
-<script type="module" src="assets/js/malavi.js?v=02e1ce03"></script>
+<script type="module" src="assets/js/malavi.js?v=754ef129"></script>
 </body>
 </html>

@@ -33,7 +33,7 @@
   --p1:#FBE7D6; --p2:#F3C49E; --p3:#EA9C63; --p4:#E17A2E; --p5:#D55E00;
   --h1:#D9E9F5; --h2:#A9CDE9; --h3:#6FAAD8; --h4:#3389C4; --h5:#0072B2;
   --l1:#D6EFE7; --l2:#A3DCC9; --l3:#66C4A6; --l4:#2FAE87; --l5:#009E73;
-  --map-none:#E4E1EC;
+  --map-none:#E4E1EC; --map-land:#E2DFEC; --map-land-edge:#CFCADF; --map-sea:#F7F6FA;
 
   --ok:#1F7A4D; --warn:#9A6410; --stop:#A63A3A;
   --ok-wash:#E4F2EA; --warn-wash:#F7EEDC; --stop-wash:#F7E7E7;
@@ -50,7 +50,7 @@
     --p1:#3A2312; --p2:#6B3D14; --p3:#9C5514; --p4:#C06416; --p5:#DB6A16;
     --h1:#16263B; --h2:#1E3F63; --h3:#26598C; --h4:#2F6EB0; --h5:#3B82D0;
     --l1:#102E24; --l2:#14503C; --l3:#177255; --l4:#178D65; --l5:#17A06F;
-    --map-none:#2A2537;
+    --map-none:#2A2537; --map-land:#332C42; --map-land-edge:#443B57; --map-sea:#1D1927;
     --ok:#5FC08C; --warn:#DCA84A; --stop:#E38080;
     --ok-wash:#1C3129; --warn-wash:#332A18; --stop-wash:#35211F;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
@@ -65,7 +65,7 @@
   --p1:#FBE7D6; --p2:#F3C49E; --p3:#EA9C63; --p4:#E17A2E; --p5:#D55E00;
   --h1:#D9E9F5; --h2:#A9CDE9; --h3:#6FAAD8; --h4:#3389C4; --h5:#0072B2;
   --l1:#D6EFE7; --l2:#A3DCC9; --l3:#66C4A6; --l4:#2FAE87; --l5:#009E73;
-  --map-none:#E4E1EC;
+  --map-none:#E4E1EC; --map-land:#E2DFEC; --map-land-edge:#CFCADF; --map-sea:#F7F6FA;
   --ok:#1F7A4D; --warn:#9A6410; --stop:#A63A3A;
   --ok-wash:#E4F2EA; --warn-wash:#F7EEDC; --stop-wash:#F7E7E7;
   --shadow:0 1px 2px rgba(23,20,31,.05), 0 8px 24px -12px rgba(23,20,31,.18);
@@ -79,7 +79,7 @@
   --p1:#3A2312; --p2:#6B3D14; --p3:#9C5514; --p4:#C06416; --p5:#DB6A16;
   --h1:#16263B; --h2:#1E3F63; --h3:#26598C; --h4:#2F6EB0; --h5:#3B82D0;
   --l1:#102E24; --l2:#14503C; --l3:#177255; --l4:#178D65; --l5:#17A06F;
-  --map-none:#2A2537;
+  --map-none:#2A2537; --map-land:#332C42; --map-land-edge:#443B57; --map-sea:#1D1927;
   --ok:#5FC08C; --warn:#DCA84A; --stop:#E38080;
   --ok-wash:#1C3129; --warn-wash:#332A18; --stop-wash:#35211F;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
@@ -434,3 +434,47 @@ footer.site a { color:var(--ink-2); }
   .rank-row { grid-template-columns:1fr; }
   .rank-row .rlab { text-align:left; }
 }
+
+/* ---------------------------------------------------------------------------
+   Map page. Leaflet draws into .leaflet-wrap; the controls sit above it in one
+   wrapping row so they stack at phone width. Genus colors come from the same
+   --g-* tokens as every other figure.
+   --------------------------------------------------------------------------- */
+.mapctl { display:flex; flex-wrap:wrap; gap:14px 22px; align-items:flex-end; }
+.mapctl label { display:flex; flex-direction:column; gap:6px; font-size:12px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); min-width:220px; flex:1 1 220px; }
+.mapctl .combo { position:relative; display:block; }
+.mapctl .combo input { font:inherit; font-size:14px; letter-spacing:0; text-transform:none; width:100%;
+  box-sizing:border-box; padding:8px 30px 8px 10px; border:1px solid var(--rule); border-radius:8px;
+  background:var(--surface); color:var(--ink); }
+.mapctl .combo-clear { position:absolute; right:4px; top:50%; transform:translateY(-50%); border:0;
+  background:none; color:var(--ink-3); cursor:pointer; font-size:17px; line-height:1; padding:4px 7px; }
+.mapctl .combo-clear:hover { color:var(--ink); }
+.mapctl .combo-list { position:absolute; z-index:1100; left:0; right:0; top:calc(100% + 4px); max-height:300px;
+  overflow:auto; margin:0; padding:4px 0; list-style:none; background:var(--surface); border:1px solid var(--rule);
+  border-radius:8px; box-shadow:0 8px 24px -12px rgba(0,0,0,.35); }
+.mapctl .combo-list li { padding:6px 10px; cursor:pointer; font-size:14px; letter-spacing:0; text-transform:none; color:var(--ink); }
+.mapctl .combo-list li:hover, .mapctl .combo-list li[aria-selected="true"] { background:var(--accent-wash); }
+.mapctl .combo-list li.sci { font-style:italic; }
+.mapctl .combo-list li.more { color:var(--ink-3); cursor:default; font-style:italic; }
+.mapctl button.ghost { font:inherit; font-size:13.5px; padding:8px 14px; border:1px solid var(--rule);
+  border-radius:8px; background:var(--surface); color:var(--ink-2); cursor:pointer; }
+.mapctl button.ghost:hover { border-color:var(--ink-3); color:var(--ink); }
+.map-summary { margin:-18px 0 0; font-size:14px; color:var(--ink-2); }
+.leaflet-wrap { width:100%; height:min(72vh, 640px); min-height:320px; border:1px solid var(--rule);
+  border-radius:var(--radius); overflow:hidden; background:var(--map-sea); }
+.leaflet-wrap .leaflet-container { background:var(--map-sea); font-family:inherit; }
+.leaflet-wrap .leaflet-popup-content-wrapper { background:var(--surface); color:var(--ink); border-radius:8px; }
+.leaflet-wrap .leaflet-popup-tip { background:var(--surface); }
+.leaflet-wrap .leaflet-bar a { background:var(--surface); color:var(--ink); border-color:var(--rule); }
+.leaflet-wrap .leaflet-bar a:hover { background:var(--surface-2); }
+.leaflet-wrap .leaflet-control-attribution { background:color-mix(in srgb, var(--surface) 80%, transparent); color:var(--ink-3); font-size:10px; }
+.leaflet-wrap .leaflet-control-attribution a { color:var(--ink-2); }
+.leaflet-wrap .leaflet-popup-content { font:13px/1.45 inherit; margin:10px 12px; max-width:340px; }
+.leaflet-wrap .leaflet-popup-content b { font-weight:600; }
+.leaflet-wrap .leaflet-popup-content table { border-collapse:collapse; margin-top:6px; font-size:12.5px; }
+.leaflet-wrap .leaflet-popup-content td { padding:1px 8px 1px 0; vertical-align:top; white-space:nowrap; }
+.leaflet-wrap .leaflet-popup-content .sci { font-style:italic; }
+.map-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:-22px; font-size:13px; color:var(--ink-2); }
+.map-legend i { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px;
+  vertical-align:-1px; border:1px solid rgba(0,0,0,.25); }

@@ -1,27 +1,27 @@
 {
-  "release": "2026-03-23",
-  "generated": "2026-09-04T19:48:44Z",
+  "release": "2026-09-15",
+  "generated": "2026-09-16T19:34:23Z",
   "reports": [
     {
       "id": "synonymy",
       "title": "Synonymy report",
       "description": "Lineage names that resolve to the same sequence.",
-      "file": "synonymy_2026-03-23.csv",
-      "rows": 408
+      "file": "synonymy_2026-09-15.csv",
+      "rows": 410
     },
     {
       "id": "ambiguous_pairs",
       "title": "Ambiguous pairs",
       "description": "Lineage pairs separated by ambiguous positions alone.",
-      "file": "ambiguous_pairs_2026-03-23.csv",
-      "rows": 158
+      "file": "ambiguous_pairs_2026-09-15.csv",
+      "rows": 164
     },
     {
       "id": "lineage_qc",
       "title": "Lineage QC",
       "description": "Sequence checks across the whole release: length, frame, duplicates.",
-      "file": "lineage_qc_2026-03-23.csv",
-      "rows": 5365
+      "file": "lineage_qc_2026-09-15.csv",
+      "rows": 5551
     }
   ]
 }
