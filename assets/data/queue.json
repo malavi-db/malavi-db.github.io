@@ -1,6 +1,6 @@
 {
-  "generated": "2026-09-15T18:02:12Z",
-  "n_submissions": 2,
+  "generated": "2026-09-16T19:25:19Z",
+  "n_submissions": 1,
   "items": [
     {
       "id": "MALAVI-SUB-2026-000007",
@@ -12,18 +12,6 @@
       "n_records": 11,
       "n_files": 8,
       "n_warnings": 7,
-      "n_errors": 0
-    },
-    {
-      "id": "MALAVI-SUB-2026-000005",
-      "submitted": "2026-08-19",
-      "status": "Accepted",
-      "pill": "p-pass",
-      "detail": "31 new lineages · 76 records · post-publication",
-      "n_lineages": 31,
-      "n_records": 76,
-      "n_files": 4,
-      "n_warnings": 10,
       "n_errors": 0
     }
   ]
