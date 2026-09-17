@@ -1,6 +1,6 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-09-16T19:33:39Z",
+  "generated": "2026-09-17T14:09:15Z",
   "malaviR_bundled": "2026-09-15",
   "alignment_length_bp": 479,
   "totals": {
@@ -658,7 +658,7 @@
   ],
   "taxonomy_source": {
     "clootl_year": 2025,
-    "malaviR_version": "1.3.0"
+    "malaviR_version": "1.3.2"
   },
   "integrity": {
     "grand_lineage_summary_rows": 5551,
@@ -677,6 +677,10 @@
     {
       "title": "One lineage listed as more than one morphospecies",
       "text": "Lineage TUPHI01 is listed as two morphospecies, Haemoproteus minutus and H. asymmetricus"
+    },
+    {
+      "title": "Parasite genus contradicts the nearest sequences",
+      "text": "32 lineages are listed under a genus that their sequences contradict: of the sequences within five mismatches of each (over at least 300 compared positions), three quarters or more belong to another genus. Lineages are: ANTHOD01, ANTHOD02, ATLPIL02, COLPAS09, EMGOD01, EMGOD02, FIPAR02, FOGRI01, HORDIP03, ICTGAL04, JUNPHA09, MEAPI16, MELMEL24, MICMIN02, MUSDAU01, MUTSW8, NENOT03, PARUS64, PARVEN01, PARVEN02, PERCAN22, PERCAN31, PETPYR01, POEMON01, POEMON02, POEPAL01, POEPAL02, PYCLEU1, TURALB06, TURGRA02, VIRHUT02, ZOSLAT08."
     }
   ]
 }
