@@ -219,7 +219,7 @@ export function countContent(sequence) {
    about 26 differences. Real "is this a new lineage?" cases differ at a handful
    of positions, far inside that bound. Anything more divergent is not a
    near-match question and is sent to BLAST. */
-const K = 16;
+export const K = 16;
 
 /* Seeds are taken every SEED_STRIDE bases rather than at every position. The
    whole point of a seed is to nominate candidates for exact scoring, and
@@ -233,7 +233,7 @@ const K = 16;
    every seed is destroyed -- far beyond the handful of differences that a
    "is this a new lineage?" question ever involves, and anything more divergent
    than that is a BLAST question, which is where the checker sends it. */
-const SEED_STRIDE = 4;
+export const SEED_STRIDE = 4;
 
 /* ---- CORROBORATION REQUIRED OF AN EXACT MATCH -------------------------------
    containmentOffset() calls an alignment exact when every overlapping position

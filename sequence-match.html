@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sequence matcher</title>
+<meta name="description" content="Paste a cytochrome b sequence and it is compared to every lineage in the current release of MalAvi. Runs in your browser.">
+<link rel="icon" href="assets/img/favicon.ico">
+<link rel="stylesheet" href="assets/css/malavi.css">
+<style>
+/* ===========================================================================
+   Page-specific layout only. Every color, font and control style comes from
+   assets/css/malavi.css, so this page follows the site's theme toggle and its
+   palette without holding a second copy of either.
+   =========================================================================== */
+.match { max-width: 1460px; margin: 0 auto; padding: 28px 24px 96px; }
+.match h1 { font-family: "League Gothic", Impact, sans-serif; font-weight: 400;
+  font-size: clamp(40px, 6vw, 68px); line-height: .95; margin: 0 0 8px;
+  text-transform: uppercase; letter-spacing: .01em; }
+.match .lede { max-width: 66ch; color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+
+/* Sidebar and results, as the Shiny app had them: controls on the left, the
+   table on the right. One column on a narrow screen, controls first. */
+.match-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; margin-top: 24px; align-items: start; }
+@media (max-width: 900px) { .match-grid { grid-template-columns: 1fr; } }
+
+.side { display: grid; gap: 14px; }
+.side h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.side textarea { width: 100%; min-height: 190px; resize: vertical; font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 11.5px; line-height: 1.5; padding: 10px; border: 1px solid var(--rule);
+  border-radius: 8px; background: var(--paper); color: var(--ink); }
+.side select { width: 100%; font: inherit; font-size: 14px; padding: 8px 10px;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); color: var(--ink); }
+
+/* The status line under the controls: what is happening, or what just ran. */
+.status { font-size: 12.5px; color: var(--ink-3); min-height: 1.2em; }
+
+/* The results table. The site's .table-wrap handles the frame and scrolling. */
+.hits table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.hits th, .hits td { padding: 7px 10px; border-bottom: 1px solid var(--rule-soft); text-align: left; white-space: nowrap; }
+.hits th { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+  font-weight: 600; position: sticky; top: 0; background: var(--surface); }
+.hits td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.hits tbody tr:hover { background: var(--accent-wash); }
+.hits tr.picked { background: var(--accent-wash); }
+.hits .lin { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 600; }
+.hits button.lin { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-size: 13px; }
+
+/* The alignment. Monospace, wrapped in 60-column blocks with the query above
+   the reference and a match line between them, the way a pairwise alignment is
+   read everywhere else. */
+.aln { margin-top: 14px; }
+.aln pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; line-height: 1.45;
+  margin: 0; padding: 12px; overflow-x: auto; background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 8px; color: var(--ink); }
+.aln .gapmark { color: var(--stop); font-weight: 700; }
+
+.foot { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-3); }
+.foot code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; word-break: break-all; }
+.foot p { max-width: 80ch; }
+</style>
+</head>
+<body>
+
+<!-- The site masthead. Kept to the same markup as index.html so the two pages
+     read as one object; the nav is a single link back, because the site is a
+     single-page app and a deep link here would land the reader on the home
+     view having asked for something else. -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <a href="index.html" style="text-decoration:none; color:inherit">
+      <div class="brand">
+        <img src="assets/img/hemignathus_virens.png" alt="">
+        <div>
+          <div class="wordmark display">Mal<span class="lo">Avi</span></div>
+          <div class="brand-sub">Avian haemosporidian database</div>
+        </div>
+      </div>
+    </a>
+    <nav class="primary">
+      <a href="index.html" style="text-decoration:none">Back to MalAvi</a>
+    </nav>
+    <button class="theme-toggle" id="themeBtn" type="button">Dark</button>
+  </div>
+</header>
+
+<main>
+<div class="match">
+
+  <p class="eyebrow">MalAvi &middot; release <span id="release">…</span></p>
+  <h1>Sequence matcher</h1>
+  <div class="lede">
+    <p>Paste a cytochrome <i>b</i> sequence here and it will be compared to every lineage
+      in the current release of MalAvi using something that is <i>like</i> BLAST. In fact
+      it's similar but still not exactly the same as the DECIPHER based function in
+      malaviR, but it works similarly and gets you the correct comparisons (the most
+      important thing).</p>
+    <p>This is run through your browser, so by pasting a sequence here you are not
+      uploading it anywhere, it remains private. This is meant to replace the shiny app we
+      were using previously.</p>
+  </div>
+
+  <div class="match-grid">
+
+    <!-- Controls, in the order the Shiny app had them. -->
+    <div>
+      <div class="card side">
+        <div>
+          <h3>Query sequence</h3>
+          <textarea id="query" spellcheck="false" autocomplete="off"
+            placeholder="Paste a DNA sequence, plain or with a Fasta header. Several Fasta records are each matched on their own."></textarea>
+        </div>
+        <div>
+          <h3>Top N hits</h3>
+          <select id="topn">
+            <option value="5" selected>5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn" type="button" id="run">Run</button>
+          <button class="btn ghost" type="button" id="demo">Use an example</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn ghost" type="button" id="csv" disabled>Download CSV of results</button>
+        </div>
+        <p class="status" id="status">Loading the release&hellip;</p>
+      </div>
+
+    </div>
+
+    <!-- Results. -->
+    <div id="out"></div>
+
+  </div>
+
+  <div class="foot">
+    <p id="repro"><code id="reproline">Nothing has been run yet.</code></p>
+    <p>Candidates are found by shared 16-mers against the release, then aligned in full
+      (overlap alignment, free end gaps, match +1, mismatch &minus;1, gap &minus;2). The
+      <b>Score</b> column is that alignment's score under this scheme. It is not a BLAST
+      bit score and not comparable to one, and there are no e-values here: every candidate
+      is aligned, and the shortlist is a seed-count cut rather than a significance cut.</p>
+    <p>A lineage is listed only when at least 50 positions of it align to the query with a
+      score of 30 or more, so the 16-base run that nominated it, plus a few chance matches
+      around it, is never shown as a hit. Finding a lineage at all
+      needs one exact 16-mer in common: a sequence that differs from everything in MalAvi
+      at roughly every sixteenth base, about 6% divergence spread evenly, will not be
+      found here, and is a question for BLAST rather than for this page. Gap characters
+      in the paste are removed before matching and U is read as T.</p>
+  </div>
+
+</div>
+</main>
+
+<script type="module">
+/* ===========================================================================
+   The page's own wiring. All of the matching lives in assets/js/sequence-match.mjs,
+   which is tested by docs/assets/js/tests/test_sequence_match.mjs; this file only
+   moves values between the form and the DOM.
+   =========================================================================== */
+import { buildIndex } from "./assets/js/sequence-check.mjs";
+import {
+  matchSequences, hitRow, toCsv, summaryLine, TABLE_COLUMNS
+} from "./assets/js/sequence-match.mjs";
+
+/* Bumped when the page's behaviour changes, and written into the CSV and the
+   summary line so a saved result says which version produced it. */
+const PAGE_VERSION = "1.1";
+
+const $ = (id) => document.getElementById(id);
+const statusBox = $("status");
+const outBox = $("out");
+
+/* --- theme toggle: the same behaviour as the site's other standalone pages --- */
+(function () {
+  const root = document.documentElement;
+  const button = $("themeBtn");
+  const isDark = () => {
+    const set = root.getAttribute("data-theme");
+    if (set) return set === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  };
+  button.addEventListener("click", () => {
+    root.setAttribute("data-theme", isDark() ? "light" : "dark");
+    button.textContent = isDark() ? "Light" : "Dark";
+  });
+  button.textContent = isDark() ? "Light" : "Dark";
+})();
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* The release's sequence index. Three megabytes, so it is fetched once, on load,
+   with the Run button disabled until it is here: a page that looks ready and
+   then does nothing for three seconds is worse than one that says it is loading. */
+let index = null;
+let lastRecords = null;
+let lastTopN = 5;
+
+$("run").disabled = true;
+$("demo").disabled = true;
+
+try {
+  const payload = await fetch("assets/data/lineage_sequences.json").then((r) => {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  });
+  index = buildIndex(payload);
+  $("release").textContent = index.release;
+  statusBox.textContent = `${index.entries.length.toLocaleString()} sequences for ` +
+    `${index.nLineages.toLocaleString()} lineages, release ${index.release}. Ready.`;
+  $("run").disabled = false;
+  $("demo").disabled = false;
+} catch (error) {
+  statusBox.textContent = "The release index did not load (" + error.message +
+    "). Reload the page, or send us the sequence and we will match it for you.";
+}
+
+/** The alignment, in 60-column blocks, query over reference. */
+function alignmentBlock(hit) {
+  const a = hit.alignment;
+  if (!a.alignedQuery) return "";
+  const width = 60;
+  const lines = [];
+  /* Row labels are padded to the longer of "query" and the lineage name, so a
+     seven-letter name such as TUMIG19 is never cut short. */
+  const labelWidth = Math.max("query".length, hit.name.length);
+  const queryLabel = "query".padEnd(labelWidth, " ");
+  const refLabel = escapeHtml(hit.name.padEnd(labelWidth, " "));
+  const blank = " ".repeat(labelWidth);
+  for (let at = 0; at < a.alignedQuery.length; at += width) {
+    const q = a.alignedQuery.slice(at, at + width);
+    const m = a.marks.slice(at, at + width);
+    const r = a.alignedReference.slice(at, at + width);
+    const column = String(at + 1).padStart(5, " ");
+    lines.push(`${column} ${queryLabel} ${escapeHtml(q)}`);
+    lines.push(`${" ".repeat(5)} ${blank} ${escapeHtml(m)}`);
+    lines.push(`${" ".repeat(5)} ${refLabel} ${escapeHtml(r)}`);
+    lines.push("");
+  }
+  return `<div class="aln"><p class="eyebrow">Alignment: query against ${escapeHtml(hit.name)}</p>` +
+    `<pre>${lines.join("\n")}</pre></div>`;
+}
+
+/** One query's results: the ranked table and its alignment, and nothing else.
+    No verdict banner and no indel flag -- the page reports what it measured and
+    leaves the reading of it to whoever pasted the sequence. */
+function resultHtml(record, i, several) {
+  const r = record.result;
+  const parts = [];
+  if (several) {
+    parts.push(`<p class="eyebrow">Record ${i + 1}` +
+      (record.name ? ` &mdash; ${escapeHtml(record.name)}` : "") + `</p>`);
+  }
+
+  /* What was set aside from the paste, said once so nobody wonders why the
+     query length differs from what they pasted. */
+  const content = r.content || {};
+  const notes = [];
+  if (content.gaps) {
+    notes.push(`${content.gaps} gap ${content.gaps === 1 ? "character" : "characters"} ` +
+      `(&ldquo;-&rdquo;) removed before matching`);
+  }
+  if (content.invalid) {
+    notes.push(`${content.invalid} ${content.invalid === 1 ? "letter" : "letters"} that ` +
+      `${content.invalid === 1 ? "is" : "are"} not a nucleotide code, treated as N`);
+  }
+  if (notes.length) parts.push(`<p class="fine">In the paste: ${notes.join("; ")}.</p>`);
+
+  if (!r.hits.length) {
+    /* Say why, because the four cases call for different next steps. */
+    const why = {
+      "empty": `Nothing in the paste reads as sequence.`,
+      "too-short": `Only ${content.unambiguous || 0} unambiguous bases were found; the ` +
+        `matcher needs at least 50 to say anything.`,
+      "no-seeds": `No lineage in the release shares a 16-base run with this query, so ` +
+        `there is nothing to align it against. Check that it is a haemosporidian ` +
+        `cytochrome <i>b</i> sequence; if it is, it is more than a few percent from ` +
+        `everything in MalAvi and a question for BLAST.`,
+      "no-alignment": `${r.candidates} ${r.candidates === 1 ? "lineage was" : "lineages were"} ` +
+        `aligned and none reaches 50 comparable positions at a score of 30 with this query. ` +
+        `Check that it is a haemosporidian cytochrome <i>b</i> sequence.`
+    };
+    parts.push(`<p class="fine">${why[r.reason] || why["no-seeds"]} ` +
+      `Send it to us either way.</p>`);
+    return parts.join("");
+  }
+
+  const header = TABLE_COLUMNS.map((c) => `<th>${c}</th>`).join("");
+  const body = r.hits.map((hit, k) => {
+    const row = hitRow(hit);
+    const cells = TABLE_COLUMNS.map((c) => {
+      if (c === "Lineage") {
+        return `<td><button class="lin" type="button" data-rec="${i}" data-hit="${k}">` +
+          `${escapeHtml(row.Lineage)}</button></td>`;
+      }
+      const value = row[c];
+      return `<td class="num">${escapeHtml(value)}</td>`;
+    }).join("");
+    return `<tr data-row="${i}-${k}"${k === 0 ? ' class="picked"' : ""}>${cells}</tr>`;
+  }).join("");
+
+  parts.push(`<div class="table-wrap hits" style="margin-top:14px"><table>` +
+    `<thead><tr>${header}</tr></thead><tbody>${body}</tbody></table></div>`);
+  parts.push(`<p class="fine">${r.hits.length} of ${r.ranked.length} ranked ` +
+    `${r.ranked.length === 1 ? "lineage" : "lineages"} shown, from ${r.candidates} aligned. ` +
+    `Click a lineage to see its alignment.</p>`);
+  parts.push(`<div id="aln-${i}">${alignmentBlock(r.hits[0])}</div>`);
+  return parts.join("");
+}
+
+function render(records) {
+  const several = records.length > 1;
+  outBox.innerHTML = records.map((record, i) => resultHtml(record, i, several)).join("<hr>");
+}
+
+/* Clicking a lineage swaps the alignment shown for that query. */
+outBox.addEventListener("click", (event) => {
+  const button = event.target.closest("button.lin");
+  if (!button || !lastRecords) return;
+  const i = Number(button.dataset.rec);
+  const k = Number(button.dataset.hit);
+  const hit = lastRecords[i].result.hits[k];
+  $("aln-" + i).innerHTML = alignmentBlock(hit);
+  outBox.querySelectorAll(`tr[data-row^="${i}-"]`).forEach((tr) => tr.classList.remove("picked"));
+  const row = outBox.querySelector(`tr[data-row="${i}-${k}"]`);
+  if (row) row.classList.add("picked");
+});
+
+/* --- running ---------------------------------------------------------------
+   The match takes about a second per query. The status line is painted first,
+   in its own frame, so the page does not appear to hang with no explanation
+   while the alignments run. */
+function run() {
+  if (!index) return;
+  const raw = $("query").value;
+  if (!raw.trim()) {
+    statusBox.textContent = "Paste a sequence first.";
+    return;
+  }
+  const topN = Number($("topn").value) || 5;
+  statusBox.textContent = "Searching the release…";
+  outBox.innerHTML = "";
+  $("csv").disabled = true;
+  requestAnimationFrame(() => setTimeout(() => {
+    const started = Date.now();
+    let records;
+    try {
+      records = matchSequences(index, raw, { topN });
+    } catch (error) {
+      /* Nothing from the previous run may survive a failed one: the CSV
+         button, the stored records and the footer's summary line all
+         described results that are no longer on the page. */
+      lastRecords = null;
+      $("reproline").textContent = "The last run failed; nothing to record.";
+      statusBox.textContent = "The search failed (" + error.message + ").";
+      return;
+    }
+    lastRecords = records;
+    lastTopN = topN;
+    render(records);
+    const elapsed = ((Date.now() - started) / 1000).toFixed(1);
+    statusBox.textContent = `${records.length} ` +
+      `${records.length === 1 ? "query" : "queries"} matched in ${elapsed} s.`;
+    $("csv").disabled = false;
+    $("reproline").textContent = summaryLine(index, records,
+      { topN, when: new Date().toISOString(), page: PAGE_VERSION });
+  }, 0));
+}
+
+$("run").addEventListener("click", run);
+
+/* Ctrl/Cmd+Enter runs, which is what a textarea with a Run button next to it
+   should do; a bare Enter has to stay a newline inside a sequence. */
+$("query").addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+    event.preventDefault();
+    run();
+  }
+});
+
+/* An example that lands on an interesting answer: a real sequence from the
+   loaded release with one base removed, so the table shows a gap in the
+   alignment and a parent one difference away, rather than a plain exact
+   match. Taken from the index, so it is always a genuine sequence from the
+   current release. */
+$("demo").addEventListener("click", () => {
+  if (!index) return;
+  const entry = index.entries.find((e) => e.ungapped.length === index.windowLength) ||
+    index.entries[0];
+  const full = entry.ungapped;
+  $("query").value = ">" + entry.names[0] + "_with_one_base_removed\n" +
+    (full.slice(0, 240) + full.slice(241)).replace(/(.{60})/g, "$1\n").trim();
+  statusBox.textContent = "An example is in the box: " + entry.names[0] +
+    " with one base removed. Press Run.";
+});
+
+$("csv").addEventListener("click", () => {
+  if (!lastRecords) return;
+  const text = toCsv(index, lastRecords,
+    { topN: lastTopN, when: new Date().toISOString(), page: PAGE_VERSION });
+  const url = URL.createObjectURL(new Blob([text], { type: "text/csv" }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `malavi_sequence_match_${index.release}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
