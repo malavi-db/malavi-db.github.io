@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-24T00:26:54Z",
+  "generated": "2026-09-24T00:54:28Z",
   "n_submissions": 2,
   "items": [
     {
@@ -11,7 +11,7 @@
       "n_lineages": 7,
       "n_records": 7,
       "n_files": 2,
-      "n_warnings": 1,
+      "n_warnings": 0,
       "n_errors": 0
     },
     {
@@ -23,7 +23,7 @@
       "n_lineages": 2,
       "n_records": 11,
       "n_files": 8,
-      "n_warnings": 7,
+      "n_warnings": 1,
       "n_errors": 0
     }
   ]
