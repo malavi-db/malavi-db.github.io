@@ -1,11 +1,39 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-09-16T19:25:20Z",
-  "n_names": 2,
+  "generated": "2026-09-24T00:26:55Z",
+  "n_names": 9,
   "names": [
     {
       "name": "CARCRI03",
       "claimed": "2026-09-02"
+    },
+    {
+      "name": "COCCOC03",
+      "claimed": "2026-09-23"
+    },
+    {
+      "name": "COCCOC04",
+      "claimed": "2026-09-23"
+    },
+    {
+      "name": "COCCOC05",
+      "claimed": "2026-09-23"
+    },
+    {
+      "name": "COCCOC06",
+      "claimed": "2026-09-23"
+    },
+    {
+      "name": "COCCOC07",
+      "claimed": "2026-09-23"
+    },
+    {
+      "name": "COCCOC08",
+      "claimed": "2026-09-23"
+    },
+    {
+      "name": "CYCAE01",
+      "claimed": "2026-09-23"
     },
     {
       "name": "PENOBS02",
