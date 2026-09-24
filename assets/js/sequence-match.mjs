@@ -1,8 +1,9 @@
 /* =============================================================================
  * sequence-match.mjs
  * -----------------------------------------------------------------------------
- * The Sequence matcher page: what the Shiny "MalAvi BLAST" app did, in the
- * browser, against the pinned release.
+ * The MalAvi BLAST page (called "Sequence matcher" from 2026-09-16 to 2026-09-24):
+ * what the Shiny "MalAvi BLAST" app did, in the browser, against the pinned
+ * release.
  *
  * HOW IT WORKS, AND WHY IT IS NOT THE SUBMIT PAGE'S CHECKER
  *   The submit page's checker (sequence-check.mjs) registers a query to the
@@ -68,7 +69,10 @@
  * NOT BLAST
  *   No e-values, no bit scores, no heuristic extension. Every candidate is
  *   aligned in full, and the candidate set is a seed-count cut, not a
- *   significance cut. The page is called "Sequence matcher" for that reason.
+ *   significance cut. The page was called "Sequence matcher" for that reason;
+ *   the curators asked on 2026-09-24 for the old app's name back, because
+ *   "BLAST" is what users look for, so the page says in its first paragraph
+ *   that it is not NCBI BLAST instead.
  * ============================================================================= */
 
 import {
@@ -760,9 +764,18 @@ export function matchSequences(index, raw, options) {
  * One table row, in the Shiny app's column order and with its column names, so
  * that someone who used the app reads the same table here.
  *
- * Two columns are added at the end because they are what the ranking uses and
- * the app had no equivalent: Comparable (columns where both sides carry a
- * definite base) and Differences (mismatches plus gaps).
+ * Three columns are added at the end because they are what the ranking uses
+ * and the app had no equivalent: Comparable (columns where both sides carry a
+ * definite base), Differences (mismatches plus gaps), and AmbiguousMatches
+ * (columns counted as a match only because an ambiguity code on one side is
+ * compatible with the base on the other: R against A, N against anything).
+ *
+ * AmbiguousMatches is there so that a 100 % row can be read correctly. The
+ * rule that a compatible code is a match is the submission checker's rule and
+ * it stays, but without this column an R in the query against an A in the
+ * release showed as identical with nothing to say it had been read that way
+ * (Mélanie Duc, 2026-09-24: the WIMANET BLAST counted it a match and the old
+ * MalAvi a difference, and this page gave no way to tell which it was doing).
  */
 export function hitRow(hit) {
   const a = hit.alignment;
@@ -781,6 +794,7 @@ export function hitRow(hit) {
     ReferenceLineageLength: hit.entry.ungapped.length,
     Comparable: a.comparable,
     Differences: a.mismatches + a.gaps,
+    AmbiguousMatches: a.ambiguousMatches,
     Genus: hit.genus,
     Accession: hit.accession
   };
@@ -789,7 +803,7 @@ export function hitRow(hit) {
 export const TABLE_COLUMNS = [
   "Lineage", "ProportionMatch", "PercentMatch", "AlignmentLength", "Matches",
   "Mismatches", "Score", "QueryGapLength", "ReferenceLineageLength",
-  "Comparable", "Differences"
+  "Comparable", "Differences", "AmbiguousMatches"
 ];
 
 export const CSV_COLUMNS = ["Query"].concat(TABLE_COLUMNS, ["Genus", "Accession"]);
@@ -812,7 +826,7 @@ export function csvCell(value) {
 /** The shown results as CSV, headed by what was run so the file stands alone. */
 export function toCsv(index, records, { topN, when, page }) {
   const lines = [
-    `# MalAvi sequence matcher. Release ${index.release}; ` +
+    `# MalAvi BLAST (the site's sequence matcher; not NCBI BLAST). Release ${index.release}; ` +
       `${index.entries.length} reference sequences; window ${index.windowLength} bp; ` +
       `top N ${topN || "all"}; run ${when}; page ${page}`,
     `# Candidates aligned per query: up to ${CANDIDATE_LIMIT} by shared ${K}-mer count, ` +
@@ -823,6 +837,9 @@ export function toCsv(index, records, { topN, when, page }) {
       `Ranking: identical alignment over >= ${MIN_COMPARABLE_TO_RANK} positions (or the whole ` +
       `query when shorter) first; then references covering >= ${MIN_COMPARABLE_TO_RANK} ` +
       `positions; then rate of disagreement; then coverage.`,
+    `# A position where an ambiguity code on one side is compatible with the base on the ` +
+      `other (R vs A, N vs anything) counts as a match, as in the submission checker; ` +
+      `AmbiguousMatches is how many of a row's Matches were counted that way.`,
     CSV_COLUMNS.join(",")
   ];
   records.forEach((record, i) => {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sequence matcher</title>
+<title>MalAvi BLAST</title>
 <meta name="description" content="Paste a cytochrome b sequence and it is compared to every lineage in the current release of MalAvi. Runs in your browser.">
 <link rel="icon" href="assets/img/favicon.ico">
 <link rel="stylesheet" href="assets/css/malavi.css">
@@ -88,13 +88,14 @@
 <div class="match">
 
   <p class="eyebrow">MalAvi &middot; release <span id="release">…</span></p>
-  <h1>Sequence matcher</h1>
+  <h1>MalAvi BLAST</h1>
   <div class="lede">
     <p>Paste a cytochrome <i>b</i> sequence here and it will be compared to every lineage
       in the current release of MalAvi using something that is <i>like</i> BLAST. In fact
       it's similar but still not exactly the same as the DECIPHER based function in
       malaviR, but it works similarly and gets you the correct comparisons (the most
-      important thing).</p>
+      important thing). The name is the one the old shiny app had, because that is what
+      people look for; it is not NCBI BLAST, and the numbers here are not BLAST scores.</p>
     <p>This is run through your browser, so by pasting a sequence here you are not
       uploading it anywhere, it remains private. This is meant to replace the shiny app we
       were using previously.</p>
@@ -150,6 +151,12 @@
       at roughly every sixteenth base, about 6% divergence spread evenly, will not be
       found here, and is a question for BLAST rather than for this page. Gap characters
       in the paste are removed before matching and U is read as T.</p>
+    <p>An ambiguity code (R, Y, N and the rest) on either side is counted as a match when
+      it is compatible with the base on the other side, the same rule the submission
+      checker uses, and never as a difference. The <b>AmbiguousMatches</b> column says how
+      many of a row's matches were counted that way, a percent that includes any is marked
+      <sup>&dagger;</sup>, and those positions are the &ldquo;:&rdquo; columns of the
+      alignment.</p>
   </div>
 
 </div>
@@ -243,8 +250,15 @@ function alignmentBlock(hit) {
     lines.push(`${" ".repeat(5)} ${refLabel} ${escapeHtml(r)}`);
     lines.push("");
   }
+  const ambiguous = a.ambiguousMatches
+    ? ` ${a.ambiguousMatches} ${a.ambiguousMatches === 1 ? "position is" : "positions are"} ` +
+      `marked &ldquo;:&rdquo;: matched only through an ambiguity code.`
+    : "";
   return `<div class="aln"><p class="eyebrow">Alignment: query against ${escapeHtml(hit.name)}</p>` +
-    `<pre>${lines.join("\n")}</pre></div>`;
+    `<pre>${lines.join("\n")}</pre>` +
+    `<p class="fine">&ldquo;|&rdquo; the same base on both sides; &ldquo;:&rdquo; an ambiguity ` +
+    `code on one side compatible with the base on the other (R against A, N against ` +
+    `anything), counted as a match; a blank is a difference or a gap.${ambiguous}</p></div>`;
 }
 
 /** One query's results: the ranked table and its alignment, and nothing else.
@@ -277,7 +291,7 @@ function resultHtml(record, i, several) {
     const why = {
       "empty": `Nothing in the paste reads as sequence.`,
       "too-short": `Only ${content.unambiguous || 0} unambiguous bases were found; the ` +
-        `matcher needs at least 50 to say anything.`,
+        `page needs at least 50 to say anything.`,
       "no-seeds": `No lineage in the release shares a 16-base run with this query, so ` +
         `there is nothing to align it against. Check that it is a haemosporidian ` +
         `cytochrome <i>b</i> sequence; if it is, it is more than a few percent from ` +
@@ -300,6 +314,13 @@ function resultHtml(record, i, several) {
           `${escapeHtml(row.Lineage)}</button></td>`;
       }
       const value = row[c];
+      /* A percent that leans on ambiguity codes is marked, so a 100 reached
+         through an R or an N is never read as an identical sequence. */
+      if (c === "PercentMatch" && row.AmbiguousMatches > 0) {
+        return `<td class="num" title="${row.AmbiguousMatches} of the matches ` +
+          `${row.AmbiguousMatches === 1 ? "is" : "are"} through an ambiguity code">` +
+          `${escapeHtml(value)}<sup>&dagger;</sup></td>`;
+      }
       return `<td class="num">${escapeHtml(value)}</td>`;
     }).join("");
     return `<tr data-row="${i}-${k}"${k === 0 ? ' class="picked"' : ""}>${cells}</tr>`;
@@ -310,6 +331,17 @@ function resultHtml(record, i, several) {
   parts.push(`<p class="fine">${r.hits.length} of ${r.ranked.length} ranked ` +
     `${r.ranked.length === 1 ? "lineage" : "lineages"} shown, from ${r.candidates} aligned. ` +
     `Click a lineage to see its alignment.</p>`);
+  /* Every shown row that leans on an ambiguity code is named here, with the
+     count, so the qualifier is in plain text and not only in a hover title. */
+  const leaning = r.hits.map((hit) => hitRow(hit)).filter((row) => row.AmbiguousMatches > 0);
+  if (leaning.length) {
+    const items = leaning.map((row) => `${escapeHtml(row.Lineage)} (${row.AmbiguousMatches})`);
+    parts.push(`<p class="fine"><sup>&dagger;</sup> Matches counted through an ambiguity ` +
+      `code, such as an R in the query against an A in the release: ${items.join(", ")}. ` +
+      `A compatible code is counted as a match, not a difference, so a 100 % marked this ` +
+      `way is not the same as an identical sequence; the exact positions are the ` +
+      `&ldquo;:&rdquo; columns of the alignment.</p>`);
+  }
   parts.push(`<div id="aln-${i}">${alignmentBlock(r.hits[0])}</div>`);
   return parts.join("");
 }
