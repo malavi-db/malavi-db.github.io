@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-24T01:46:45Z",
+  "generated": "2026-09-24T02:09:47Z",
   "n_submissions": 2,
   "items": [
     {
@@ -11,8 +11,8 @@
       "n_lineages": 7,
       "n_records": 7,
       "n_files": 2,
-      "n_warnings": 1,
-      "n_errors": 0
+      "n_warnings": 0,
+      "n_errors": 1
     },
     {
       "id": "MALAVI-SUB-2026-000007",
