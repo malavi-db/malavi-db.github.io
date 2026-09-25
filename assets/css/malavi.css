@@ -30,6 +30,7 @@
   --accent:#5B4BA6; --accent-ink:#FFFFFF; --accent-wash:#EDEAF8;
 
   --g-p:#D55E00; --g-h:#0072B2; --g-l:#009E73;
+  --t-local:#E69F00; --t-else:#CC79A7; --t-undet:#9A94A6;
   --p1:#FBE7D6; --p2:#F3C49E; --p3:#EA9C63; --p4:#E17A2E; --p5:#D55E00;
   --h1:#D9E9F5; --h2:#A9CDE9; --h3:#6FAAD8; --h4:#3389C4; --h5:#0072B2;
   --l1:#D6EFE7; --l2:#A3DCC9; --l3:#66C4A6; --l4:#2FAE87; --l5:#009E73;
@@ -47,6 +48,7 @@
     --rule:#362F47; --rule-soft:#2B2539;
     --accent:#A99CF0; --accent-ink:#17141F; --accent-wash:#292244;
     --g-p:#DB6A16; --g-h:#3B82D0; --g-l:#17A06F;
+    --t-local:#F0B033; --t-else:#D98BB8; --t-undet:#7C7589;
     --p1:#3A2312; --p2:#6B3D14; --p3:#9C5514; --p4:#C06416; --p5:#DB6A16;
     --h1:#16263B; --h2:#1E3F63; --h3:#26598C; --h4:#2F6EB0; --h5:#3B82D0;
     --l1:#102E24; --l2:#14503C; --l3:#177255; --l4:#178D65; --l5:#17A06F;
@@ -62,6 +64,7 @@
   --rule:#D8D4E4; --rule-soft:#E6E3EE;
   --accent:#5B4BA6; --accent-ink:#FFFFFF; --accent-wash:#EDEAF8;
   --g-p:#D55E00; --g-h:#0072B2; --g-l:#009E73;
+  --t-local:#E69F00; --t-else:#CC79A7; --t-undet:#9A94A6;
   --p1:#FBE7D6; --p2:#F3C49E; --p3:#EA9C63; --p4:#E17A2E; --p5:#D55E00;
   --h1:#D9E9F5; --h2:#A9CDE9; --h3:#6FAAD8; --h4:#3389C4; --h5:#0072B2;
   --l1:#D6EFE7; --l2:#A3DCC9; --l3:#66C4A6; --l4:#2FAE87; --l5:#009E73;
@@ -76,6 +79,7 @@
   --rule:#362F47; --rule-soft:#2B2539;
   --accent:#A99CF0; --accent-ink:#17141F; --accent-wash:#292244;
   --g-p:#DB6A16; --g-h:#3B82D0; --g-l:#17A06F;
+    --t-local:#F0B033; --t-else:#D98BB8; --t-undet:#7C7589;
   --p1:#3A2312; --p2:#6B3D14; --p3:#9C5514; --p4:#C06416; --p5:#DB6A16;
   --h1:#16263B; --h2:#1E3F63; --h3:#26598C; --h4:#2F6EB0; --h5:#3B82D0;
   --l1:#102E24; --l2:#14503C; --l3:#177255; --l4:#178D65; --l5:#17A06F;
@@ -457,6 +461,10 @@ footer.site a { color:var(--ink-2); }
 .mapctl .combo-list li:hover, .mapctl .combo-list li[aria-selected="true"] { background:var(--accent-wash); }
 .mapctl .combo-list li.sci { font-style:italic; }
 .mapctl .combo-list li.more { color:var(--ink-3); cursor:default; font-style:italic; }
+.mapctl .toggles { display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--ink-2); padding-bottom:6px; }
+.mapctl .toggles label { flex:0 0 auto; min-width:0; flex-direction:row; align-items:center; gap:8px; font-size:13px; text-transform:none; letter-spacing:0; }
+.mapctl .toggles input { margin:0; accent-color:var(--accent); }
+.mapctl .toggles label[hidden] { display:none; }
 .mapctl button.ghost { font:inherit; font-size:13.5px; padding:8px 14px; border:1px solid var(--rule);
   border-radius:8px; background:var(--surface); color:var(--ink-2); cursor:pointer; }
 .mapctl button.ghost:hover { border-color:var(--ink-3); color:var(--ink); }
@@ -474,6 +482,7 @@ footer.site a { color:var(--ink-2); }
 .leaflet-wrap .leaflet-popup-content b { font-weight:600; }
 .leaflet-wrap .leaflet-popup-content table { border-collapse:collapse; margin-top:6px; font-size:12.5px; }
 .leaflet-wrap .leaflet-popup-content td { padding:1px 8px 1px 0; vertical-align:top; white-space:nowrap; }
+.leaflet-wrap .tx-dot { display:inline-block; width:9px; height:9px; border-radius:50%; border:1px solid rgba(0,0,0,.25); vertical-align:-1px; }
 .leaflet-wrap .leaflet-popup-content .sci { font-style:italic; }
 .map-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:-22px; font-size:13px; color:var(--ink-2); }
 .map-legend i { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:6px;

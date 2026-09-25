@@ -11,6 +11,9 @@
  * top-level await to fetch its data before rendering.
  * ============================================================================= */
 
+/* The map's transmission rule lives in its own module so the test can import it. */
+import { transmissionClass, siteClass, CLASSES } from "./transmission.mjs";
+
 /* GitHub Pages serves these with `Cache-Control: max-age=600`, so a browser will
    happily show a ten-minute-old copy after a publish. The queue and contributor
    board change whenever a submission is processed, not only when the release is
@@ -974,6 +977,9 @@ const CHECKLIST_BEHIND_NOTE =
     var legend = document.getElementById("mapLegend");
     var note = document.getElementById("mapNote");
     var holder = document.getElementById("siteMap");
+    var byTransmission = document.getElementById("mapByTransmission");
+    var hideUndetermined = document.getElementById("mapHideUndetermined");
+    var hideUndeterminedLabel = document.getElementById("mapHideUndeterminedLabel");
     if (!document.getElementById("mapHost") || !holder) return;
 
     if (!POINTS || !POINTS.sites) {
@@ -994,6 +1000,20 @@ const CHECKLIST_BEHIND_NOTE =
       return (v || "#6E677F").trim();
     }
     function sci(name) { return '<span class="sci">' + escapeHtml(name) + "</span>"; }
+    /* Transmission-class colors, from the --t-* tokens in the stylesheet. */
+    var CLASS_VAR = { local: "--t-local", elsewhere: "--t-else", undetermined: "--t-undet" };
+    function classColor(key) {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(CLASS_VAR[key]);
+      return (v || "#9A94A6").trim();
+    }
+    /* Whether the transmission view is on: the checkbox, when the payload can
+       support it (older payloads carry no age/status fields). */
+    var HAS_TRANSMISSION = !!(POINTS.ages && POINTS.statuses);
+    function transmissionOn() { return HAS_TRANSMISSION && byTransmission && byTransmission.checked; }
+    /* The class of one record: [.., age, status, range] at indexes 6, 7, 8. */
+    function recordClass(rec) {
+      return transmissionClass(POINTS.ages[rec[6]], POINTS.statuses[rec[7]], rec[8]);
+    }
 
     /* Each of the three fields is one box: scroll its list, or type to narrow it. The
        lists depend on each other -- choosing a genus leaves only that genus's lineages
@@ -1103,14 +1123,36 @@ const CHECKLIST_BEHIND_NOTE =
       hostSel.setAllowed(allowed.h); genusSel.setAllowed(allowed.g); lineageSel.setAllowed(allowed.l);
     }
     function changed() { rebuildOptions(); draw(); }
+    if (byTransmission) {
+      if (!HAS_TRANSMISSION) {
+        byTransmission.disabled = true;
+        byTransmission.parentNode.title = "This release's points file carries no host age or residency.";
+      }
+      byTransmission.addEventListener("change", function () {
+        if (hideUndeterminedLabel) hideUndeterminedLabel.hidden = !transmissionOn();
+        if (!transmissionOn() && hideUndetermined) hideUndetermined.checked = false;
+        renderLegend(); renderNote(); draw();
+      });
+    }
+    if (hideUndetermined) hideUndetermined.addEventListener("change", draw);
     hostSel = combo("mapHost", POINTS.hosts, true, "All host species", changed);
     genusSel = combo("mapGenus", POINTS.genera, true, "All genera", changed);
     lineageSel = combo("mapLineage", POINTS.lineages, false, "All lineages", changed);
     rebuildOptions();
 
-    legend.innerHTML = POINTS.genera.map(function (g) {
-      return "<span><i style=\"background:" + genusColor(g) + "\"></i>" + sci(g) + "</span>";
-    }).join("") + "<span><i style=\"background:#6E677F\"></i>several genera at one site</span>";
+    function renderLegend() {
+      if (transmissionOn()) {
+        legend.innerHTML = CLASSES.map(function (c) {
+          return "<span><i style=\"background:" + classColor(c.key) + "\"></i>" +
+            escapeHtml(c.label) + ' <span style="color:var(--ink-3)">(' + escapeHtml(c.hint) + ")</span></span>";
+        }).join("");
+        return;
+      }
+      legend.innerHTML = POINTS.genera.map(function (g) {
+        return "<span><i style=\"background:" + genusColor(g) + "\"></i>" + sci(g) + "</span>";
+      }).join("") + "<span><i style=\"background:#6E677F\"></i>several genera at one site</span>";
+    }
+    renderLegend();
 
     var map = null, layer = null;
 
@@ -1125,13 +1167,20 @@ const CHECKLIST_BEHIND_NOTE =
     }
 
     function popupFor(site, recs) {
+      var tx = transmissionOn();
       var rows = recs.slice(0, 60).map(function (rec) {
         var prev = (rec[4] === null || rec[4] === undefined) ? "" :
           rec[4] + (rec[5] === null || rec[5] === undefined ? "" : " / " + rec[5]);
+        /* In the transmission view the raw age and status are shown per record,
+           with the class mark, so the summary color can be checked against them. */
+        var extra = !tx ? "" :
+          "<td>" + escapeHtml(POINTS.ages[rec[6]] || "") + "</td>" +
+          "<td>" + escapeHtml(POINTS.statuses[rec[7]] || "") + "</td>" +
+          '<td><i class="tx-dot" style="background:' + classColor(recordClass(rec)) + '"></i></td>';
         return "<tr><td><b>" + escapeHtml(POINTS.lineages[rec[0]]) + "</b></td>" +
           "<td>" + sci(POINTS.hosts[rec[2]]) + "</td>" +
           "<td>" + prev + "</td>" +
-          "<td>" + escapeHtml(POINTS.references[rec[3]]) + "</td></tr>";
+          "<td>" + escapeHtml(POINTS.references[rec[3]]) + "</td>" + extra + "</tr>";
       }).join("");
       var more = recs.length > 60 ? "<p class=\"fine\">and " + (recs.length - 60) +
         " more records at this site; see the Hosts and Sites table.</p>" : "";
@@ -1139,7 +1188,8 @@ const CHECKLIST_BEHIND_NOTE =
         (site.c ? ", " + escapeHtml(site.c) : "") +
         "<br><span style=\"color:var(--ink-3)\">" + recs.length + " matching record" +
         (recs.length === 1 ? "" : "s") + " · " + site.la + ", " + site.lo + "</span>" +
-        "<table><tr><td>Lineage</td><td>Host</td><td>Found / tested</td><td>Study</td></tr>" +
+        "<table><tr><td>Lineage</td><td>Host</td><td>Found / tested</td><td>Study</td>" +
+        (tx ? "<td>Age</td><td>Status</td><td></td>" : "") + "</tr>" +
         rows + "</table>" + more;
     }
 
@@ -1150,15 +1200,28 @@ const CHECKLIST_BEHIND_NOTE =
                    l: lineageSel.value === "" ? -1 : Number(lineageSel.value) };
       if (layer) { layer.remove(); }
       layer = L.layerGroup();
+      var tx = transmissionOn();
+      var hide = tx && hideUndetermined && hideUndetermined.checked;
       var nSites = 0, nRecords = 0, bounds = [];
+      var byClass = { local: 0, elsewhere: 0, undetermined: 0 };
+      var hiddenSites = 0, hiddenRecords = 0;
       POINTS.sites.forEach(function (site) {
         var recs = matching(site, want);
         if (!recs.length) return;
+        var color;
+        if (tx) {
+          var classes = recs.map(recordClass);
+          classes.forEach(function (c) { byClass[c]++; });
+          var cls = siteClass(classes);
+          if (hide && cls === "undetermined") { hiddenSites++; hiddenRecords += recs.length; return; }
+          color = classColor(cls);
+        } else {
+          var genera = {};
+          recs.forEach(function (rec) { if (rec[1] >= 0) genera[POINTS.genera[rec[1]]] = true; });
+          var names = Object.keys(genera);
+          color = names.length === 1 ? genusColor(names[0]) : "#6E677F";
+        }
         nSites++; nRecords += recs.length;
-        var genera = {};
-        recs.forEach(function (rec) { if (rec[1] >= 0) genera[POINTS.genera[rec[1]]] = true; });
-        var names = Object.keys(genera);
-        var color = names.length === 1 ? genusColor(names[0]) : "#6E677F";
         var marker = L.circleMarker([site.la, site.lo], {
           radius: Math.min(4 + Math.sqrt(recs.length), 14),
           color: color, weight: 1, fillColor: color, fillOpacity: 0.55
@@ -1169,9 +1232,17 @@ const CHECKLIST_BEHIND_NOTE =
       });
       layer.addTo(map);
       var filtered = want.h >= 0 || want.g >= 0 || want.l >= 0;
-      summary.textContent = n(nSites) + " site" + (nSites === 1 ? "" : "s") + ", " +
+      var text = n(nSites) + " site" + (nSites === 1 ? "" : "s") + ", " +
         n(nRecords) + " record" + (nRecords === 1 ? "" : "s") +
         (filtered ? " match the selection." : " with coordinates in release " + POINTS.release + ".");
+      if (tx) {
+        /* The class counts are over every matching record, hidden ones included,
+           so the undetermined majority is stated even when it is not drawn. */
+        text += " Transmission evidence: local " + n(byClass.local) + ", possibly elsewhere " +
+          n(byClass.elsewhere) + ", undetermined " + n(byClass.undetermined) +
+          (hide ? " (" + n(hiddenSites) + " site" + (hiddenSites === 1 ? "" : "s") + " with only undetermined records hidden)" : "") + ".";
+      }
+      summary.textContent = text;
       if (filtered && bounds.length) {
         map.fitBounds(bounds, { padding: [30, 30], maxZoom: 7 });
       } else if (!filtered) {
@@ -1226,11 +1297,36 @@ const CHECKLIST_BEHIND_NOTE =
           " not shown" : "") +
         ". Records without a site are in the tables but not here. Point size grows with " +
         "the number of matching records; gray points hold records of more than one genus.";
+      renderNote();
       draw();
+    }
+    /* The caption: the basic one, plus the rule in words when the transmission view is on. */
+    var BASE_NOTE = null;
+    function renderNote() {
+      if (BASE_NOTE === null) BASE_NOTE = note.textContent;
+      if (!transmissionOn()) { note.textContent = BASE_NOTE; return; }
+      var tested = POINTS.transmission ? POINTS.transmission.n_range_tested : 0;
+      note.textContent = BASE_NOTE + " Transmission evidence reads each record's host age and " +
+        "residency: a resident of any age, a nestling, or a hatch-year bird caught inside its " +
+        "species' breeding range was infected where it was sampled; an adult of a migratory " +
+        "species may have been infected anywhere on its route; everything else (unknown age or " +
+        "residency, mixed groups, hatch-year migrants caught outside the breeding range) is " +
+        "undetermined. A site takes the strongest class among its records; open it to see each " +
+        "record's age and status." +
+        (POINTS.transmission && POINTS.transmission.range_edition ?
+          " Breeding ranges: " + POINTS.transmission.range_edition + ", tested for " + n(tested) +
+          " hatch-year records; the record carries no sampling date, so a bird caught inside its " +
+          "breeding range after returning from migration cannot be told apart." : "");
     }
 
     document.getElementById("mapReset").addEventListener("click", function () {
-      hostSel.reset(); genusSel.reset(); lineageSel.reset(); rebuildOptions(); draw();
+      hostSel.reset(); genusSel.reset(); lineageSel.reset(); rebuildOptions();
+      if (byTransmission && byTransmission.checked) {
+        byTransmission.checked = false;
+        byTransmission.dispatchEvent(new Event("change"));   /* legend, note, hide box, draw */
+      } else {
+        draw();
+      }
     });
     document.addEventListener("malavi:view", function (e) {
       if (e.detail === "map") init();
