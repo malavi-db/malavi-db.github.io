@@ -1,8 +1,36 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-09-24T00:26:55Z",
-  "n_names": 9,
+  "generated": "2026-09-30T22:06:57Z",
+  "n_names": 58,
   "names": [
+    {
+      "name": "ACRSCI03",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ACRSCI04",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ACRSCI05",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ACRSCI06",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ACRSCI07",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ACRSCI08",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ACRSCI09",
+      "claimed": "2026-09-29"
+    },
     {
       "name": "CARCRI03",
       "claimed": "2026-09-02"
@@ -32,12 +60,180 @@
       "claimed": "2026-09-23"
     },
     {
+      "name": "COLLIV01",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "COLLIV02",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "COLLIV03",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "CURCAN01",
+      "claimed": "2026-09-29"
+    },
+    {
       "name": "CYCAE01",
       "claimed": "2026-09-23"
     },
     {
+      "name": "GAGLA09",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "GAGLA10",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "GAGLA11",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "GAGLA12",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "MUSSTR01",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "MUSSTR02",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "MUSSTR03",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "MUSSTR04",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ORIORI05",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "ORIORI06",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ09",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ10",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ11",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ12",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ13",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ14",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ15",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ16",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ17",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ18",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ19",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ20",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PARMAJ21",
+      "claimed": "2026-09-29"
+    },
+    {
       "name": "PENOBS02",
       "claimed": "2026-09-02"
+    },
+    {
+      "name": "PICPIC03",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "PICPIC04",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "STUUNI01",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "STUUNI02",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "SYLATR01",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "SYLATR02",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "SYLATR03",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "SYLATR04",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "SYLATR05",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "TURMER23",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "TURMER24",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "TURMER25",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "TURMER26",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "TURMER27",
+      "claimed": "2026-09-29"
+    },
+    {
+      "name": "TURMER28",
+      "claimed": "2026-09-29"
     }
   ]
 }
