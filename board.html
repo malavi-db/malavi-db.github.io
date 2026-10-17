@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MalAvi curators' board</title>
+<meta name="description" content="Where each submission to MalAvi stands. For curators.">
+<!-- For the curators, not for search engines. The contents are encrypted either way; this
+     only keeps an empty password box out of search results. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/favicon.ico">
+<link rel="stylesheet" href="assets/css/malavi.css">
+<style>
+/* ===========================================================================
+   Page-specific layout only. Every color, font and control style comes from
+   assets/css/malavi.css, so this page follows the site's theme toggle and its
+   palette without holding a second copy of either.
+   =========================================================================== */
+.board { max-width: 1180px; margin: 0 auto; padding: 28px 24px 96px; }
+.board h1 { font-family: "League Gothic", Impact, sans-serif; font-weight: 400;
+  font-size: clamp(40px, 6vw, 68px); line-height: .95; margin: 0 0 8px;
+  text-transform: uppercase; letter-spacing: .01em; }
+.board .lede { max-width: 66ch; color: var(--ink-2); font-size: 16px; line-height: 1.55; }
+
+/* The password box. One line: the field, the button, and what it remembers. */
+.gate { margin-top: 22px; max-width: 560px; }
+.gate input[type="password"] { flex: 1 1 220px; min-width: 0; font: inherit; font-size: 15px;
+  padding: 9px 12px; border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--paper); color: var(--ink); }
+.gate label.keep { display: flex; gap: 8px; align-items: center; font-size: 13px;
+  color: var(--ink-3); margin-top: 10px; }
+.status { font-size: 13px; color: var(--ink-3); min-height: 1.2em; margin-top: 10px; }
+.status.bad { color: var(--stop); }
+
+/* One card per submission, longest wait first. Cards rather than a wide table:
+   the sentence saying what a submission is waiting on is the point of the page
+   and needs room, and a curator may well open this on a phone. */
+.subs { display: grid; gap: 14px; margin-top: 22px; }
+.sub { display: grid; gap: 10px; }
+.sub-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+.sub-id { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 600; font-size: 15px; }
+.sub-state { font-size: 11px; letter-spacing: .07em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px; }
+.sub-meta { font-size: 13px; color: var(--ink-3); }
+.sub-wait { font-size: 15px; line-height: 1.5; color: var(--ink); max-width: 78ch; margin: 0; }
+.sub-wait b { font-weight: 600; }
+.sub-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px;
+  font-size: 13.5px; color: var(--ink-2); margin: 0; }
+.sub-facts dt { color: var(--ink-3); }
+.sub-facts dd { margin: 0; }
+.sub-facts .gone { text-decoration: line-through; color: var(--ink-3); }
+.sub-links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.finished { margin-top: 26px; font-size: 13.5px; color: var(--ink-2); }
+.finished summary { cursor: pointer; color: var(--ink-3); }
+.finished ul { margin: 10px 0 0; padding-left: 18px; }
+.finished li { margin-bottom: 4px; }
+
+.foot { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule);
+  font-size: 12.5px; color: var(--ink-3); }
+.foot p { max-width: 80ch; }
+</style>
+</head>
+<body>
+
+<!-- The site masthead, the same markup as the other standalone pages. -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <a href="index.html" style="text-decoration:none; color:inherit">
+      <div class="brand">
+        <img src="assets/img/hemignathus_virens.png" alt="">
+        <div>
+          <div class="wordmark display">Mal<span class="lo">Avi</span></div>
+          <div class="brand-sub">Avian haemosporidian database</div>
+        </div>
+      </div>
+    </a>
+    <nav class="primary">
+      <a href="index.html" style="text-decoration:none">Back to MalAvi</a>
+    </nav>
+    <button class="theme-toggle" id="themeBtn" type="button">Dark</button>
+  </div>
+</header>
+
+<main>
+<div class="board">
+
+  <p class="eyebrow">MalAvi &middot; for curators</p>
+  <h1>Curators' board</h1>
+  <div class="lede">
+    <p>Where each submission stands: what has been recorded on it, and what it is waiting
+      on. It needs the curators' password.</p>
+  </div>
+
+  <!-- The gate. Shown until the board opens. -->
+  <form class="card gate" id="gate" autocomplete="off">
+    <label class="eyebrow" for="password">Password</label>
+    <div class="btn-row">
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button class="btn" type="submit" id="open">Open</button>
+    </div>
+    <label class="keep"><input type="checkbox" id="keep"> Remember it on this device</label>
+    <p class="status" id="status"></p>
+  </form>
+
+  <!-- The board. Filled in once the file has been decrypted. -->
+  <div id="out" hidden>
+    <p class="fine" id="asof"></p>
+    <div class="subs" id="subs"></div>
+    <details class="finished" id="finished" hidden>
+      <summary id="finishedSummary"></summary>
+      <ul id="finishedList"></ul>
+    </details>
+    <div class="btn-row" style="margin-top:22px">
+      <button class="btn ghost" type="button" id="reload">Check again</button>
+      <button class="btn ghost" type="button" id="forget">Close and forget the password</button>
+    </div>
+  </div>
+
+  <div class="foot">
+    <p>The board is written from the review ledger each time the intake programs run, so a
+      verdict recorded on the form appears here after the next run, not at once. The email
+      you get when a verdict is recorded is the immediate notice.</p>
+    <p>It is decrypted in your browser; the password is not sent anywhere. It shows no
+      submitter's name and no reason for any verdict: those are in the report and in the
+      emails between curators.</p>
+  </div>
+
+</div>
+</main>
+
+<script type="module">
+/* ===========================================================================
+   The page's own wiring. Decryption and all the wording live in
+   assets/js/board.mjs, which is tested by assets/js/tests/test_board.mjs; this
+   file only moves values between the form and the DOM.
+   =========================================================================== */
+import {
+  decryptBoard, stateWords, dayOf, daysSince, daysWords, waitingWords, verdictWords, safeLink
+} from "./assets/js/board.mjs";
+
+const $ = (id) => document.getElementById(id);
+const BOARD_URL = "assets/data/board.json";
+const STORAGE_KEY = "malavi-board-password";
+
+/* --- theme toggle: the same behaviour as the site's other standalone pages --- */
+(function () {
+  const root = document.documentElement;
+  const button = $("themeBtn");
+  const isDark = () => {
+    const set = root.getAttribute("data-theme");
+    if (set) return set === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  };
+  button.addEventListener("click", () => {
+    root.setAttribute("data-theme", isDark() ? "light" : "dark");
+    button.textContent = isDark() ? "Light" : "Dark";
+  });
+  button.textContent = isDark() ? "Light" : "Dark";
+})();
+
+/* Everything from the board goes through this before it reaches innerHTML,
+   quotes included, because some of it lands inside attributes. */
+function escapeHtml(text) {
+  return String(text == null ? "" : text)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/* The remembered password. Storage can be unavailable (a private window, a
+   blocked site), so every access is guarded and the page works without it. */
+function remembered() {
+  try { return localStorage.getItem(STORAGE_KEY) || ""; } catch (err) { return ""; }
+}
+function remember(password) {
+  try { localStorage.setItem(STORAGE_KEY, password); } catch (err) { /* works without */ }
+}
+function forget() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* nothing to forget */ }
+}
+
+function say(text, bad) {
+  const box = $("status");
+  box.textContent = text;
+  box.classList.toggle("bad", Boolean(bad));
+}
+
+/* Which wash a state is painted in: the site's own three. */
+function stateClass(state) {
+  if (state === "approved") return "t-pass";
+  if (state === "held" || state === "screening_failed") return "t-fail";
+  return "t-warn";
+}
+
+function submissionHtml(row, now) {
+  const waiting = waitingWords(row.waiting, now);
+  const since = row.waiting && row.waiting.since;
+  const waited = daysSince(since, now);
+
+  const verdicts = (row.verdicts || []).length
+    ? row.verdicts.map((v) =>
+        `<span class="${v.standing ? "" : "gone"}">${escapeHtml(verdictWords(v))}</span>`)
+        .join("<br>")
+    : "None on this revision.";
+
+  const report = row.report
+    ? `sent ${escapeHtml(dayOf(row.report.sent))}`
+    : "not sent yet";
+
+  const facts = [
+    ["Received", escapeHtml(dayOf(row.received))],
+    ["Revision", escapeHtml(row.revision)],
+    ["Report", report],
+    ["Verdicts", verdicts]
+  ];
+  if (row.names) {
+    facts.push(["Names", `${escapeHtml(row.names)} reserved`]);
+  }
+  if (row.embargoed) {
+    facts.push(["Records", "held back until the study is published"]);
+  }
+
+  const links = [];
+  const reportUrl = row.report ? safeLink(row.report.url) : "";
+  if (reportUrl) {
+    links.push(`<a class="btn ghost" href="${escapeHtml(reportUrl)}" target="_blank" ` +
+      `rel="noopener">Open the report</a>`);
+  }
+  const verdictUrl = safeLink(row.verdict_link);
+  if (verdictUrl) {
+    links.push(`<a class="btn" href="${escapeHtml(verdictUrl)}" target="_blank" ` +
+      `rel="noopener">Record a verdict</a>`);
+  }
+
+  return `<div class="card sub">
+    <div class="sub-head">
+      <span class="sub-id">${escapeHtml(row.id)}</span>
+      <span class="sub-state ${stateClass(row.state)}">${escapeHtml(stateWords(row.state))}</span>
+      <span class="sub-meta">${waited === null ? "" :
+        "waiting " + (waited === 0 ? "since today" : "for " + escapeHtml(daysWords(waited)))}</span>
+    </div>
+    <p class="sub-wait">${waiting.who
+      ? `<b>Waiting on ${escapeHtml(waiting.who)}.</b> ` : ""}${escapeHtml(waiting.text)}</p>
+    <dl class="sub-facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
+    ${links.length ? `<div class="sub-links">${links.join("")}</div>` : ""}
+  </div>`;
+}
+
+function show(board, written) {
+  const now = new Date();
+  const rows = board.submissions || [];
+  $("subs").innerHTML = rows.length
+    ? rows.map((row) => submissionHtml(row, now)).join("")
+    : `<p class="fine">No submission is in review.</p>`;
+
+  const finished = board.finished || [];
+  $("finished").hidden = finished.length === 0;
+  $("finishedSummary").textContent =
+    `${finished.length} finished ${finished.length === 1 ? "submission" : "submissions"}`;
+  $("finishedList").innerHTML = finished.map((row) =>
+    `<li><span class="sub-id">${escapeHtml(row.id)}</span>: ` +
+    `${escapeHtml(stateWords(row.state).toLowerCase())} ${escapeHtml(dayOf(row.ended))}</li>`)
+    .join("");
+
+  $("asof").textContent = written
+    ? `${rows.length} in review, longest wait first. The board last changed ${dayOf(written)}.`
+    : `${rows.length} in review, longest wait first.`;
+  $("gate").hidden = true;
+  $("out").hidden = false;
+}
+
+async function open(password, { quiet } = {}) {
+  if (!quiet) say("Opening…");
+  let envelope;
+  try {
+    const response = await fetch(BOARD_URL, { cache: "no-cache" });
+    if (response.status === 404) {
+      say("The board has not been published yet.", true);
+      return false;
+    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    envelope = await response.json();
+  } catch (err) {
+    say(`The board could not be loaded (${err.message}). Try again in a moment.`, true);
+    return false;
+  }
+  try {
+    const board = await decryptBoard(envelope, password);
+    show(board, envelope.written);
+    say("");
+    return true;
+  } catch (err) {
+    say(err.message, true);
+    return false;
+  }
+}
+
+let current = "";
+
+$("gate").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const password = $("password").value.trim();
+  if (!password) return;
+  $("open").disabled = true;
+  const opened = await open(password);
+  $("open").disabled = false;
+  if (opened) {
+    current = password;
+    if ($("keep").checked) remember(password); else forget();
+    $("password").value = "";
+  }
+});
+
+$("reload").addEventListener("click", () => { if (current) open(current, { quiet: true }); });
+
+$("forget").addEventListener("click", () => {
+  forget();
+  current = "";
+  $("subs").innerHTML = "";
+  $("finishedList").innerHTML = "";
+  $("out").hidden = true;
+  $("gate").hidden = false;
+  $("keep").checked = false;
+  say("");
+});
+
+/* A remembered password opens the board without asking. If it no longer works
+   (the password was changed), it is forgotten and the box is shown. */
+(async function () {
+  const stored = remembered();
+  if (!stored) return;
+  $("keep").checked = true;
+  if (await open(stored)) {
+    current = stored;
+  } else {
+    forget();
+  }
+})();
+</script>
+</body>
+</html>
