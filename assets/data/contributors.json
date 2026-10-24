@@ -1,7 +1,15 @@
 {
-  "generated": "2026-10-14T14:00:31Z",
-  "n_contributors": 2,
+  "generated": "2026-10-24T20:35:53Z",
+  "n_contributors": 3,
   "contributors": [
+    {
+      "name": "Jeffrey Bell",
+      "institution": "University of North Dakota",
+      "lineages": 43,
+      "records": 0,
+      "submissions": 1,
+      "since": "2026-10-22"
+    },
     {
       "name": "Carolina Anjos",
       "institution": "Universidade de Sao Paulo",

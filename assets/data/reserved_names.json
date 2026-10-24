@@ -1,7 +1,7 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-10-14T14:00:32Z",
-  "n_names": 64,
+  "generated": "2026-10-24T20:35:53Z",
+  "n_names": 107,
   "names": [
     {
       "name": "ACRSCI03",
@@ -32,12 +32,40 @@
       "claimed": "2026-09-29"
     },
     {
+      "name": "AGRLIV01",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "ASTPYR02",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "BOMCED03",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "CARBAR07",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "CARBAR08",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "CARCRI03",
       "claimed": "2026-09-02"
     },
     {
+      "name": "CATMEX01",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "CHARUF01",
       "claimed": "2026-10-13"
+    },
+    {
+      "name": "CINPAT01",
+      "claimed": "2026-10-22"
     },
     {
       "name": "COCCOC03",
@@ -92,6 +120,54 @@
       "claimed": "2026-09-23"
     },
     {
+      "name": "DIUDIU14",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DIUDIU15",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DUMCAR30",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DUMCAR41",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DUMCAR49",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DUMCAR50",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DUMCAR51",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "DUMCAR52",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "ELAALB10",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "ELAALB11",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "ELAALB12",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "ELAALB13",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "GAGLA09",
       "claimed": "2026-09-29"
     },
@@ -108,6 +184,14 @@
       "claimed": "2026-09-29"
     },
     {
+      "name": "HABFUS02",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "LEPAEG01",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "MUSSTR01",
       "claimed": "2026-09-29"
     },
@@ -122,6 +206,14 @@
     {
       "name": "MUSSTR04",
       "claimed": "2026-09-29"
+    },
+    {
+      "name": "MYICRI01",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "MYISWA02",
+      "claimed": "2026-10-22"
     },
     {
       "name": "MYRLOR01",
@@ -196,6 +288,30 @@
       "claimed": "2026-09-02"
     },
     {
+      "name": "PHRFRU15",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "PHRFRU16",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "PHYFRU17",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "PHYRAR06",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "PHYRAR07",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "PHYRAR08",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "PICPIC03",
       "claimed": "2026-09-29"
     },
@@ -208,12 +324,32 @@
       "claimed": "2026-10-13"
     },
     {
+      "name": "SETRUT01",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "SETRUT02",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "SPIPAL02",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "SPIPAL03",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "STUUNI01",
       "claimed": "2026-09-29"
     },
     {
       "name": "STUUNI02",
       "claimed": "2026-09-29"
+    },
+    {
+      "name": "SUBMOD01",
+      "claimed": "2026-10-22"
     },
     {
       "name": "SYLATR01",
@@ -234,6 +370,18 @@
     {
       "name": "SYLATR05",
       "claimed": "2026-09-29"
+    },
+    {
+      "name": "TROAED28",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "TURFAL13",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "TURFAL14",
+      "claimed": "2026-10-22"
     },
     {
       "name": "TURMER23",
@@ -258,6 +406,30 @@
     {
       "name": "TURMER28",
       "claimed": "2026-09-29"
+    },
+    {
+      "name": "UPUSAT01",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "UPUSAT02",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "VERPER01",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "VERPER02",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "XOLPYR03",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "ZENAUR04",
+      "claimed": "2026-10-22"
     }
   ]
 }
