@@ -1,7 +1,7 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-10-24T20:35:53Z",
-  "n_names": 107,
+  "generated": "2026-10-27T20:41:00Z",
+  "n_names": 109,
   "names": [
     {
       "name": "ACRSCI03",
@@ -166,6 +166,14 @@
     {
       "name": "ELAALB13",
       "claimed": "2026-10-22"
+    },
+    {
+      "name": "ENIFER01",
+      "claimed": "2026-10-27"
+    },
+    {
+      "name": "ENIFER02",
+      "claimed": "2026-10-27"
     },
     {
       "name": "GAGLA09",
