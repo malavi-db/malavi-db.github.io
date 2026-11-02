@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-02T22:40:59Z",
+  "generated": "2026-11-02T22:54:01Z",
   "n_submissions": 9,
   "items": [
     {
@@ -10,7 +10,7 @@
       "detail": "2 new lineages · 3 records · post-publication",
       "n_lineages": 2,
       "n_records": 3,
-      "n_files": 3,
+      "n_files": 1,
       "n_warnings": 2,
       "n_errors": 0
     },
@@ -22,7 +22,7 @@
       "detail": "43 new lineages · pre-publication",
       "n_lineages": 43,
       "n_records": 0,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 48,
       "n_errors": 2
     },
@@ -34,7 +34,7 @@
       "detail": "4 new lineages · pre-publication",
       "n_lineages": 4,
       "n_records": 0,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 4,
       "n_errors": 0
     },
@@ -46,7 +46,7 @@
       "detail": "1 record · post-publication",
       "n_lineages": 0,
       "n_records": 1,
-      "n_files": 3,
+      "n_files": 1,
       "n_warnings": 2,
       "n_errors": 0
     },
@@ -58,7 +58,7 @@
       "detail": "1 new lineage · 1 record · pre-publication",
       "n_lineages": 1,
       "n_records": 1,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 0,
       "n_errors": 0
     },
@@ -70,7 +70,7 @@
       "detail": "1 new lineage · 4 records · pre-publication",
       "n_lineages": 1,
       "n_records": 4,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 12,
       "n_errors": 0
     },
@@ -82,7 +82,7 @@
       "detail": "49 new lineages · 49 records · pre-publication",
       "n_lineages": 49,
       "n_records": 49,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 51,
       "n_errors": 1
     },
@@ -94,7 +94,7 @@
       "detail": "7 new lineages · 7 records · pre-publication",
       "n_lineages": 7,
       "n_records": 7,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 0,
       "n_errors": 0
     },
@@ -106,7 +106,7 @@
       "detail": "2 new lineages · 11 records · post-publication",
       "n_lineages": 2,
       "n_records": 11,
-      "n_files": 8,
+      "n_files": 1,
       "n_warnings": 1,
       "n_errors": 0
     }
