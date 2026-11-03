@@ -213,10 +213,15 @@ let lastTopN = 5;
 /* The Lineage History table, when the release carries one (a release table
    since 2026-09-25): what a lineage used to be called. Fetched beside the index
    and never required; an older release's site has no such file and the page
-   then says nothing about former names. */
+   then says nothing about former names. The file is asked for only when
+   tables_index.json lists it (since 2026-11-03), as malavi.js does: fetching
+   it unconditionally put a 404 in the console on every visit. */
 let history = null;
-fetch("assets/data/tables/lineage_history.json")
+fetch("assets/data/tables_index.json")
   .then((r) => (r.ok ? r.json() : null))
+  .then((index) => (index && index.tables && index.tables.lineage_history
+    ? fetch("assets/data/tables/lineage_history.json") : null))
+  .then((r) => (r && r.ok ? r.json() : null))
   .then((payload) => {
     if (!payload || !payload.rows || !payload.columns) return;
     const keys = payload.columns.map((c) => c.key);

@@ -149,20 +149,34 @@ export function daysWords(days) {
  * (a curator, a lead curator, the submitter, the maintainer; empty while a hold
  * is running, when it is nobody's) and `text` is the sentence.
  */
-export function waitingWords(waiting, now = new Date()) {
+export function waitingWords(waiting, now = new Date(), flags = []) {
   const w = waiting || {};
   switch (w.code) {
     case "screening":
       return { who: "the maintainer", text: "The automated checks have not run yet." };
     case "verdict":
       return { who: "a curator", text: "No verdict has been recorded on this revision." };
-    case "flag":
+    case "flag": {
+      // Every standing flag (board version 2 lists them, from any revision); a
+      // version 1 file names only the oldest, through `w`.
+      const standing = (flags && flags.length) ? flags
+        : [{ id: w.flag || "", by: w.by || "a curator" }];
+      const names = [...new Set(standing.map((f) => f.by || "a curator"))];
+      const list = standing.map((f) => `${f.id} by ${f.by || "a curator"}`);
+      // Corrected 2026-11-03. This used to say a flag "ends when the submitter's
+      // answer comes in as a new revision". It does not: the ledger keeps a flag
+      // from any revision standing (ledger.blocking_holds) until the curator who
+      // placed it withdraws it or a lead curator clears it.
       return {
-        who: "the submitter, or " + (w.by || "the curator who flagged it"),
-        text: `Flag ${w.flag || ""} by ${w.by || "a curator"} stands. It ends when the ` +
-          "submitter's answer comes in as a new revision, when the flag is withdrawn, or " +
-          "when a lead curator clears it."
+        who: joinNames(names),
+        text: (standing.length === 1
+          ? `Flag ${list[0]} stands. It stands until ${names[0]} withdraws it or a ` +
+            "lead curator clears it."
+          : `Flags ${joinNames(list)} stand. Each stands until the curator who placed ` +
+            "it withdraws it or a lead curator clears it.") +
+          " A new revision does not end a flag."
       };
+    }
     case "correction_approval":
       return { who: "a lead curator",
                text: `Correction ${w.correction || ""} is waiting for a lead curator's approval.` };
@@ -188,6 +202,65 @@ export function waitingWords(waiting, now = new Date()) {
     default:
       return { who: "", text: "" };
   }
+}
+
+/** "A", "A and B", "A, B and C". */
+export function joinNames(names) {
+  const list = (names || []).filter(Boolean);
+  if (list.length <= 1) return list.join("");
+  return list.slice(0, -1).join(", ") + " and " + list[list.length - 1];
+}
+
+/**
+ * The standing flags of a row. Board version 2 carries them (every revision);
+ * a version 1 file has none, and its flags are only in the waiting code, so the
+ * page then shows no flag buttons rather than guessing links.
+ */
+export function flagsOf(row) {
+  return (row && Array.isArray(row.flags)) ? row.flags : [];
+}
+
+/** "Assigned at the report of 2026-11-02: Luz Garcia-Longoria", or "". */
+export function assigneeWords(row) {
+  const a = row && row.assignee;
+  if (!a || !a.name) return "";
+  return `${a.name} (assigned when the report went out, ${dayOf(a.at)})`;
+}
+
+/**
+ * The two buttons of one standing flag, as { label, hint, url } each.
+ *
+ * Withdraw: only the curator who placed the flag can withdraw it; the ledger
+ * refuses anyone else's (ledger.retract_verdict), so the label names them.
+ * Clear: a lead curator's action (ledger.override_hold), said in the label.
+ * `hint` says what is left to do on the form, which depends on how much the
+ * link could fill in (the entry ids pinned in config/project.yml).
+ */
+export function flagButtons(flag) {
+  const f = flag || {};
+  const route = f.route_filled ? "" : "Choose the route on the first page, then Next. ";
+  const by = f.by || "the curator who placed it";
+  return {
+    withdraw: {
+      label: `Withdraw ${f.id} (${by} only)`,
+      // ledger.retract_verdict refuses anyone else, and a curator no longer active.
+      hint: route + (f.withdraw_filled
+        ? `The flag id ${f.id} is filled in.`
+        : `Type the flag id ${f.id}.`) +
+        ` Only ${by} can withdraw it, while still an active curator; otherwise a lead clears it.`,
+      url: safeLink(f.withdraw_link)
+    },
+    clear: {
+      label: `Clear ${f.id} (lead curators)`,
+      // ledger.override_hold refuses a lead clearing their own flag.
+      hint: route + (f.clear_filled
+        ? `The hold id ${f.id} is filled in, and ${by} as the person consulted: change ` +
+          "it if you consulted someone else. Give the date, how, and what was resolved."
+        : `Type the hold id ${f.id} and who you consulted.`) +
+        ` A lead cannot clear a flag of their own; they withdraw it.`,
+      url: safeLink(f.clear_link)
+    }
+  };
 }
 
 /** One verdict as a phrase: "V1 flagged by A Curator, 2026-10-01". */

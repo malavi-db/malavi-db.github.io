@@ -13,7 +13,7 @@
 
 /* The map's transmission rule lives in its own module so the test can import it. */
 import { transmissionClass, siteClass, CLASSES } from "./transmission.mjs";
-import { historyOf } from "./lineage-history.mjs";
+import { historyHtml as renderHistory } from "./lineage-history.mjs";
 import {
   equalEarthForward, equalEarthInverse, EQUAL_EARTH_X_MAX, EQUAL_EARTH_Y_MAX,
   clipRingToLongitudes, densifyRing, worldOutline
@@ -912,33 +912,11 @@ const CHECKLIST_BEHIND_NOTE =
       ? ' <span class="fine">(you typed ' + escapeHtml(found.typed) + ")</span>" : "";
 
     /* What the Lineage History says about the name: what it used to be called,
-       or what it is called now. Every rename, merge and removal has a public
-       row, so that a name read in an old paper can be followed forward. */
-    var past = history ? historyOf(history, name) : null;
-    function historyHtml() {
-      if (!past) return "";
-      var out = "";
-      if (past.formerly.length) {
-        out += '<p class="fine">Formerly ' + past.formerly.map(function (f) {
-          return "<b>" + escapeHtml(f.name) + "</b> (" + escapeHtml(f.event) +
-            (f.date ? " " + escapeHtml(String(f.date).slice(0, 10)) : "") +
-            (f.reason ? ": " + escapeHtml(f.reason) : "") + ")";
-        }).join("; ") + ".</p>";
-      }
-      if (past.became) {
-        out += '<p class="fine"><b>This name is no longer in use.</b> It was ' +
-          escapeHtml(past.became.event) + " <b>" + escapeHtml(past.became.name) + "</b>" +
-          (past.became.date ? " on " + escapeHtml(String(past.became.date).slice(0, 10)) : "") +
-          (past.became.reason ? ": " + escapeHtml(past.became.reason) : "") +
-          ". Records are under that name.</p>";
-      }
-      if (past.removed) {
-        out += '<p class="fine"><b>This name was removed</b>' +
-          (past.removed.date ? " on " + escapeHtml(String(past.removed.date).slice(0, 10)) : "") +
-          (past.removed.reason ? ": " + escapeHtml(past.removed.reason) : "") + ".</p>";
-      }
-      return out;
-    }
+       what it is called now, and when its stored sequence was replaced. Every
+       rename, merge and removal has a public row, so that a name read in an old
+       paper can be followed forward. The HTML is built in lineage-history.mjs
+       (since 2026-11-03), where the node tests cover it. */
+    function historyHtml() { return renderHistory(history, name); }
 
     if (found.inRelease) {
       var row = summary

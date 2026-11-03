@@ -50,6 +50,9 @@
 .sub-facts dd { margin: 0; }
 .sub-facts .gone { text-decoration: line-through; color: var(--ink-3); }
 .sub-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.flag-line { margin-bottom: 10px; }
+.flag-line .sub-links { margin-top: 6px; }
+.flag-hint { font-size: 90%; color: var(--ink-3); margin-top: 4px; }
 
 .finished { margin-top: 26px; font-size: 13.5px; color: var(--ink-2); }
 .finished summary { cursor: pointer; color: var(--ink-3); }
@@ -136,7 +139,8 @@
    file only moves values between the form and the DOM.
    =========================================================================== */
 import {
-  decryptBoard, stateWords, dayOf, daysSince, daysWords, waitingWords, verdictWords, safeLink
+  decryptBoard, stateWords, dayOf, daysSince, daysWords, waitingWords, verdictWords, safeLink,
+  flagsOf, flagButtons, assigneeWords
 } from "./assets/js/board.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -193,7 +197,8 @@ function stateClass(state) {
 }
 
 function submissionHtml(row, now) {
-  const waiting = waitingWords(row.waiting, now);
+  const flags = flagsOf(row);
+  const waiting = waitingWords(row.waiting, now, flags);
   const since = row.waiting && row.waiting.since;
   const waited = daysSince(since, now);
 
@@ -213,6 +218,27 @@ function submissionHtml(row, now) {
     ["Report", report],
     ["Verdicts", verdicts]
   ];
+  const assignee = assigneeWords(row);
+  if (assignee) {
+    facts.splice(2, 0, ["Assigned", escapeHtml(assignee)]);
+  }
+  // Every standing flag, from any revision (a flag placed on an earlier revision
+  // still blocks this one), each with its two buttons.
+  if (flags.length) {
+    facts.push(["Standing flags", flags.map((f) => {
+      const buttons = flagButtons(f);
+      const one = (b, cls) => b.url
+        ? `<a class="btn ${cls}" href="${escapeHtml(b.url)}" target="_blank" rel="noopener">` +
+          `${escapeHtml(b.label)}</a>`
+        : "";
+      // Both hints inline, not as tooltips: a tooltip does not show on a phone.
+      return `<div class="flag-line">${escapeHtml(f.id)} by ${escapeHtml(f.by)}, ` +
+        `${escapeHtml(dayOf(f.at))}, on revision ${escapeHtml(f.revision)}` +
+        `<div class="sub-links">${one(buttons.withdraw, "")}${one(buttons.clear, "ghost")}</div>` +
+        `<div class="flag-hint"><b>Withdraw:</b> ${escapeHtml(buttons.withdraw.hint)}</div>` +
+        `<div class="flag-hint"><b>Clear:</b> ${escapeHtml(buttons.clear.hint)}</div></div>`;
+    }).join("")]);
+  }
   if (row.names) {
     facts.push(["Names", `${escapeHtml(row.names)} reserved`]);
   }
