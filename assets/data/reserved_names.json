@@ -1,8 +1,20 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-10-27T20:41:00Z",
-  "n_names": 109,
+  "generated": "2026-11-07T05:58:14Z",
+  "n_names": 115,
   "names": [
+    {
+      "name": "ACRSCH03",
+      "claimed": "2026-11-06"
+    },
+    {
+      "name": "ACRSCH04",
+      "claimed": "2026-11-06"
+    },
+    {
+      "name": "ACRSCH05",
+      "claimed": "2026-11-06"
+    },
     {
       "name": "ACRSCI03",
       "claimed": "2026-09-29"
@@ -292,6 +304,14 @@
       "claimed": "2026-10-09"
     },
     {
+      "name": "PARUS95",
+      "claimed": "2026-11-06"
+    },
+    {
+      "name": "PARUS96",
+      "claimed": "2026-11-06"
+    },
+    {
       "name": "PENOBS02",
       "claimed": "2026-09-02"
     },
@@ -326,6 +346,10 @@
     {
       "name": "PICPIC04",
       "claimed": "2026-09-29"
+    },
+    {
+      "name": "PICPIC05",
+      "claimed": "2026-11-06"
     },
     {
       "name": "RAMDIC01",
