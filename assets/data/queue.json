@@ -1,7 +1,19 @@
 {
-  "generated": "2026-11-09T22:21:41Z",
-  "n_submissions": 10,
+  "generated": "2026-11-11T06:18:38Z",
+  "n_submissions": 11,
   "items": [
+    {
+      "id": "MALAVI-SUB-2026-000017",
+      "submitted": "2026-11-10",
+      "status": "Under review",
+      "pill": "p-check",
+      "detail": "14 new lineages · pre-publication",
+      "n_lineages": 14,
+      "n_records": 0,
+      "n_files": 2,
+      "n_warnings": 26,
+      "n_errors": 7
+    },
     {
       "id": "MALAVI-SUB-2026-000016",
       "submitted": "2026-11-06",

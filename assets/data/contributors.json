@@ -1,6 +1,6 @@
 {
-  "generated": "2026-11-07T05:58:14Z",
-  "n_contributors": 5,
+  "generated": "2026-11-11T06:18:38Z",
+  "n_contributors": 6,
   "contributors": [
     {
       "name": "Jeffrey Bell",
@@ -9,6 +9,14 @@
       "records": 0,
       "submissions": 1,
       "since": "2026-10-22"
+    },
+    {
+      "name": "Citlali Yamail Rodriguez Licea",
+      "institution": "Instituto Potosino de Investigación Científica y Tecnológica",
+      "lineages": 14,
+      "records": 0,
+      "submissions": 1,
+      "since": "2026-11-10"
     },
     {
       "name": "Mohammad Aljehni",

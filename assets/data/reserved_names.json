@@ -1,7 +1,7 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-11-07T05:58:14Z",
-  "n_names": 115,
+  "generated": "2026-11-11T06:18:38Z",
+  "n_names": 129,
   "names": [
     {
       "name": "ACRSCH03",
@@ -48,12 +48,20 @@
       "claimed": "2026-10-22"
     },
     {
+      "name": "AMPBIL03",
+      "claimed": "2026-11-10"
+    },
+    {
       "name": "ASTPYR02",
       "claimed": "2026-10-22"
     },
     {
       "name": "BOMCED03",
       "claimed": "2026-10-22"
+    },
+    {
+      "name": "CALMEL01",
+      "claimed": "2026-11-10"
     },
     {
       "name": "CARBAR07",
@@ -208,8 +216,32 @@
       "claimed": "2026-10-22"
     },
     {
+      "name": "HAEMEX03",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "HAEMEX04",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "HAEMEX05",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "HAEMEX06",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "HAEMEX07",
+      "claimed": "2026-11-10"
+    },
+    {
       "name": "LEPAEG01",
       "claimed": "2026-10-22"
+    },
+    {
+      "name": "MIMPOL26",
+      "claimed": "2026-11-10"
     },
     {
       "name": "MUSSTR01",
@@ -352,6 +384,14 @@
       "claimed": "2026-11-06"
     },
     {
+      "name": "POOGRA01",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "POOGRA02",
+      "claimed": "2026-11-10"
+    },
+    {
       "name": "RAMDIC01",
       "claimed": "2026-10-13"
     },
@@ -362,6 +402,14 @@
     {
       "name": "SETRUT02",
       "claimed": "2026-10-22"
+    },
+    {
+      "name": "SPIBRE01",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "SPIBRE02",
+      "claimed": "2026-11-10"
     },
     {
       "name": "SPIPAL02",
@@ -402,6 +450,14 @@
     {
       "name": "SYLATR05",
       "claimed": "2026-09-29"
+    },
+    {
+      "name": "TOXCUR02",
+      "claimed": "2026-11-10"
+    },
+    {
+      "name": "TOXCUR03",
+      "claimed": "2026-11-10"
     },
     {
       "name": "TROAED28",
