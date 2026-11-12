@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-11T06:18:38Z",
+  "generated": "2026-11-12T00:44:23Z",
   "n_submissions": 11,
   "items": [
     {
@@ -10,7 +10,7 @@
       "detail": "14 new lineages · pre-publication",
       "n_lineages": 14,
       "n_records": 0,
-      "n_files": 2,
+      "n_files": 1,
       "n_warnings": 26,
       "n_errors": 7
     },
@@ -43,11 +43,11 @@
       "submitted": "2026-10-22",
       "status": "Under review",
       "pill": "p-check",
-      "detail": "43 new lineages · pre-publication",
-      "n_lineages": 43,
+      "detail": "40 new lineages · pre-publication",
+      "n_lineages": 40,
       "n_records": 0,
       "n_files": 1,
-      "n_warnings": 48,
+      "n_warnings": 42,
       "n_errors": 2
     },
     {
@@ -103,12 +103,12 @@
       "submitted": "2026-09-29",
       "status": "Under review",
       "pill": "p-check",
-      "detail": "49 new lineages · 49 records · pre-publication",
-      "n_lineages": 49,
-      "n_records": 49,
+      "detail": "2 new lineages · 17 records · pre-publication",
+      "n_lineages": 2,
+      "n_records": 17,
       "n_files": 1,
-      "n_warnings": 51,
-      "n_errors": 1
+      "n_warnings": 0,
+      "n_errors": 0
     },
     {
       "id": "MALAVI-SUB-2026-000008",

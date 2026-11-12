@@ -1,7 +1,7 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-11-11T06:18:38Z",
-  "n_names": 129,
+  "generated": "2026-11-12T00:44:24Z",
+  "n_names": 79,
   "names": [
     {
       "name": "ACRSCH03",
@@ -14,34 +14,6 @@
     {
       "name": "ACRSCH05",
       "claimed": "2026-11-06"
-    },
-    {
-      "name": "ACRSCI03",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ACRSCI04",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ACRSCI05",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ACRSCI06",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ACRSCI07",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ACRSCI08",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ACRSCI09",
-      "claimed": "2026-09-29"
     },
     {
       "name": "AGRLIV01",
@@ -116,24 +88,8 @@
       "claimed": "2026-10-07"
     },
     {
-      "name": "COLLIV01",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "COLLIV02",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "COLLIV03",
-      "claimed": "2026-09-29"
-    },
-    {
       "name": "CONLIN17",
       "claimed": "2026-10-13"
-    },
-    {
-      "name": "CURCAN01",
-      "claimed": "2026-09-29"
     },
     {
       "name": "CYCAE01",
@@ -145,14 +101,6 @@
     },
     {
       "name": "DIUDIU15",
-      "claimed": "2026-10-22"
-    },
-    {
-      "name": "DUMCAR30",
-      "claimed": "2026-10-22"
-    },
-    {
-      "name": "DUMCAR41",
       "claimed": "2026-10-22"
     },
     {
@@ -196,20 +144,12 @@
       "claimed": "2026-10-27"
     },
     {
-      "name": "GAGLA09",
-      "claimed": "2026-09-29"
+      "name": "EUCPEN01",
+      "claimed": "2026-10-22"
     },
     {
-      "name": "GAGLA10",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "GAGLA11",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "GAGLA12",
-      "claimed": "2026-09-29"
+      "name": "EUCPEN02",
+      "claimed": "2026-10-22"
     },
     {
       "name": "HABFUS02",
@@ -244,27 +184,7 @@
       "claimed": "2026-11-10"
     },
     {
-      "name": "MUSSTR01",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "MUSSTR02",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "MUSSTR03",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "MUSSTR04",
-      "claimed": "2026-09-29"
-    },
-    {
       "name": "MYICRI01",
-      "claimed": "2026-10-22"
-    },
-    {
-      "name": "MYISWA02",
       "claimed": "2026-10-22"
     },
     {
@@ -273,62 +193,6 @@
     },
     {
       "name": "ORIORI05",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "ORIORI06",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ09",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ10",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ11",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ12",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ13",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ14",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ15",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ16",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ17",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ18",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ19",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ20",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PARMAJ21",
       "claimed": "2026-09-29"
     },
     {
@@ -356,10 +220,6 @@
       "claimed": "2026-10-22"
     },
     {
-      "name": "PHYFRU17",
-      "claimed": "2026-10-22"
-    },
-    {
       "name": "PHYRAR06",
       "claimed": "2026-10-22"
     },
@@ -368,15 +228,7 @@
       "claimed": "2026-10-22"
     },
     {
-      "name": "PHYRAR08",
-      "claimed": "2026-10-22"
-    },
-    {
       "name": "PICPIC03",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "PICPIC04",
       "claimed": "2026-09-29"
     },
     {
@@ -420,36 +272,8 @@
       "claimed": "2026-10-22"
     },
     {
-      "name": "STUUNI01",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "STUUNI02",
-      "claimed": "2026-09-29"
-    },
-    {
       "name": "SUBMOD01",
       "claimed": "2026-10-22"
-    },
-    {
-      "name": "SYLATR01",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "SYLATR02",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "SYLATR03",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "SYLATR04",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "SYLATR05",
-      "claimed": "2026-09-29"
     },
     {
       "name": "TOXCUR02",
@@ -470,30 +294,6 @@
     {
       "name": "TURFAL14",
       "claimed": "2026-10-22"
-    },
-    {
-      "name": "TURMER23",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "TURMER24",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "TURMER25",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "TURMER26",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "TURMER27",
-      "claimed": "2026-09-29"
-    },
-    {
-      "name": "TURMER28",
-      "claimed": "2026-09-29"
     },
     {
       "name": "UPUSAT01",
