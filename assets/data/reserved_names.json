@@ -1,7 +1,7 @@
 {
   "release": "2026-09-15",
-  "generated": "2026-11-12T00:44:24Z",
-  "n_names": 79,
+  "generated": "2026-11-12T23:39:22Z",
+  "n_names": 81,
   "names": [
     {
       "name": "ACRSCH03",
@@ -144,10 +144,6 @@
       "claimed": "2026-10-27"
     },
     {
-      "name": "EUCPEN01",
-      "claimed": "2026-10-22"
-    },
-    {
       "name": "EUCPEN02",
       "claimed": "2026-10-22"
     },
@@ -188,6 +184,10 @@
       "claimed": "2026-10-22"
     },
     {
+      "name": "MYISWA02",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "MYRLOR01",
       "claimed": "2026-10-13"
     },
@@ -220,11 +220,19 @@
       "claimed": "2026-10-22"
     },
     {
+      "name": "PHYFRU17",
+      "claimed": "2026-10-22"
+    },
+    {
       "name": "PHYRAR06",
       "claimed": "2026-10-22"
     },
     {
       "name": "PHYRAR07",
+      "claimed": "2026-10-22"
+    },
+    {
+      "name": "PHYRAR08",
       "claimed": "2026-10-22"
     },
     {

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-12T00:44:23Z",
+  "generated": "2026-11-12T23:39:22Z",
   "n_submissions": 11,
   "items": [
     {
@@ -43,11 +43,11 @@
       "submitted": "2026-10-22",
       "status": "Under review",
       "pill": "p-check",
-      "detail": "40 new lineages · pre-publication",
-      "n_lineages": 40,
+      "detail": "42 new lineages · pre-publication",
+      "n_lineages": 42,
       "n_records": 0,
       "n_files": 1,
-      "n_warnings": 42,
+      "n_warnings": 45,
       "n_errors": 2
     },
     {
